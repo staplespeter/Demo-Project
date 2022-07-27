@@ -2,9 +2,8 @@
 //import mysqlx from "'../../node_modules/@mysql/xdevapi/index.js';"; 
 const { defineFeature, loadFeature } = require('jest-cucumber');
 const mysqlx = require('@mysql/xdevapi');
-const { addSyntheticLeadingComment } = require('typescript');
 
-const feature = loadFeature("./test/features/DDL.feature");
+const feature = loadFeature("./deploy/local/__test__/features/DDL.feature");
 const mysqlxConfig = { host: 'localhost', port: 33060, user: 'TestRunner', password: 'TestRunner', schema: 'DemoProject' };
 
 defineFeature(feature, test => {
@@ -19,7 +18,7 @@ defineFeature(feature, test => {
 
     beforeAll(()=> {
         return mysqlx.getSession(mysqlxConfig)
-            .then (s => {
+            .then(s => {
                 session = s;
                 userTable = session.getDefaultSchema().getTable('User');
             });
