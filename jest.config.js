@@ -3,6 +3,7 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   "testMatch": [
-    "**/*.steps.js"
+    "**/*.steps.js",
+    "**/*.test.ts"
   ],
 };
