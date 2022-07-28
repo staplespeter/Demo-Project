@@ -34,7 +34,7 @@ defineFeature(feature, test => {
 
     afterAll(() => {
         if (session) {
-            session.close();
+            return session.close();
         }
     })
 
