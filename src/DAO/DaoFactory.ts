@@ -3,7 +3,7 @@ import IDaoFactory from "./IDaoFactory";
 import { DaoTypes } from "./types";
 
 export default class DaoFactory implements IDaoFactory {
-    fieldDefs: Map<DaoTypes, Array<string>> = new Map<DaoTypes, Array<string>>();
+    readonly fieldDefs: Map<DaoTypes, Array<string>> = new Map<DaoTypes, Array<string>>();
 
     getDao(objectName: string): Promise<IDao> {
         return null;

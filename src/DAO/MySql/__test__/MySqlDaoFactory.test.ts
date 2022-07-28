@@ -1,10 +1,10 @@
 import MySqlDaoFactory from "../MySqlDaoFactory";
 import MySqlDao from "../MySqlDao";
-const mysqlxConfig = { host: 'localhost', port: 33060, user: 'TestRunner', password: 'TestRunner', schema: 'DemoProject' };
+import { mysqlxTestConfig } from '../../__test__/appdata';
 
 describe("MySqlDaoFactory tests", () => {
     it("can return a MySqlDao object with no records", async () => {
-        let factory = new MySqlDaoFactory(mysqlxConfig);
+        let factory = new MySqlDaoFactory(mysqlxTestConfig);
         let userTable = await factory.getDao("User");
 
         expect(factory.fieldDefs.size).toEqual(1);
@@ -20,10 +20,8 @@ describe("MySqlDaoFactory tests", () => {
 
         expect(userTable instanceof MySqlDao).toEqual(true);
         expect(userTable.objectName).toEqual("User");
-        expect(userTable.fields.length).toEqual(0);
-        expect(userTable.records).toEqual(null);
+        expect(userTable.fieldCount).toEqual(0);
+        expect(userTable.recordCount).toEqual(0);
         expect(userTable.currentRecord).toEqual(null);
-        expect(userTable.filterField).toEqual(null);
-        expect(userTable.filterValue).toEqual(null);
     });
 });

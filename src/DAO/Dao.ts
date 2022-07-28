@@ -1,53 +1,61 @@
+import IDao from "./IDao";
 import IDaoFactory from "./IDaoFactory";
 import IDaoRecord from "./IDaoRecord";
 
-export default class Dao {
-    readonly factory: IDaoFactory;
+export default abstract class Dao implements IDao {
+    protected readonly _factory: IDaoFactory;
+
+    protected _records: Array<IDaoRecord> = new Array();
+    get recordCount(): number {
+        return this._records.length;
+    }
+    getRecord(x: number): IDaoRecord {
+        if (x < 0 || x >= this._records.length) {
+            return null;
+        }
+        return this._records[x];
+    }
+
+    protected _fields: Array<string> = new Array();
+    get fieldCount(): number {
+        return this._fields.length;
+    }
+    getField(x: number): string {
+        if (x < 0 || x >= this._fields.length) {
+            return null;
+        }
+        return this._fields[x];
+    }
+
+    protected _currentRecordIndex: number = null;
+    protected _currentRecord: IDaoRecord = null;
+    get currentRecord(): IDaoRecord {
+        return this._currentRecord;
+    }
+
+    protected _bof: boolean = true;
+    get bof(): boolean {
+        return this._bof;
+    }
+
+    protected _eof: boolean = false;
+    get eof(): boolean {
+        return this._eof;
+    }
+
     readonly objectName: string = null;
-    readonly fields: Array<string> = new Array<string>();
-    readonly records: Array<IDaoRecord> = null;
-    readonly currentRecord: IDaoRecord = null;
-    filterField: string = null;
-    filterValue: any = null;
+
 
     constructor(daoFactory: IDaoFactory, objectName: string) {
-        this.factory = daoFactory;
+        this._factory = daoFactory;
         this.objectName = objectName;
     }
 
-    load(populate?: boolean): Number { 
-        return 0;
-    }
-
-    loadWithFilter(filterField: string, filterValue: any, populate?: boolean): Number {
-        return 0;
-    }
-
-    loadFields(fields: string, filterField?: string, filterValue?: any, populate?: boolean): Number {
-        return 0;
-    }
-
-    save(): Number {
-        return 0;
-    }
-
-    discard(): Number {
-        return 0;
-    }
-
-    first(): IDaoRecord {
-        return null;
-    }
-
-    last(): IDaoRecord {
-        return null;
-    }
-
-    prev(): IDaoRecord {
-        return null;
-    }
-
-    next(): IDaoRecord {
-        return null;
-    }
+    abstract load(fields?: Array<string>, filter?: string, populate?: boolean): Promise<number>;
+    abstract save(): number;
+    abstract discard(): number;
+    abstract first(): IDaoRecord;
+    abstract last(): Promise<IDaoRecord>;
+    abstract prev(): IDaoRecord;
+    abstract next(): Promise<IDaoRecord>;
 }

@@ -7,6 +7,9 @@ export default class DaoRecord implements IDaoRecord {
     hasChanged: boolean = false;
     fields: Array<IDaoField> = new Array<DaoField>;
 
+    constructor(rows: Array<Array<any>>, colNames: Array<string>) {
+        
+    }
 
     load(): void {
 

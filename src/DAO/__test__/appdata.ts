@@ -1,0 +1,1 @@
+export const mysqlxTestConfig = { host: 'localhost', port: 33060, user: 'TestRunner', password: 'TestRunner', schema: 'DemoProject' };

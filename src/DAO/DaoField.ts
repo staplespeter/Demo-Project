@@ -1,7 +1,7 @@
 import IDaoField from "./IDaoField";
 
 export default class DaoField implements IDaoField {
-    fieldName: string = null;
+    readonly fieldName: string = null;
     value: any;
     oldValue: any;
 
