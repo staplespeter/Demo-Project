@@ -1,5 +1,12 @@
+import IDaoFieldDef from "./IDaoFieldDef";
+
 export default interface IDaoField {
-    fieldName: string;
+    readonly fieldDef: IDaoFieldDef;
+    readonly isNew: boolean;
+    readonly hasChanged: boolean;
+    readonly oldValue: any;
     value: any;
-    oldValue: any;
+
+    discard(): void;
+    save(): void;
 }

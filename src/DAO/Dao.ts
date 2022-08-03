@@ -1,5 +1,6 @@
 import IDao from "./IDao";
 import IDaoFactory from "./IDaoFactory";
+import IDaoFieldDef from "./IDaoFieldDef";
 import IDaoRecord from "./IDaoRecord";
 
 export default abstract class Dao implements IDao {
@@ -16,15 +17,15 @@ export default abstract class Dao implements IDao {
         return this._records[x];
     }
 
-    protected _fields: Array<string> = new Array();
+    protected _fieldDefs: Array<IDaoFieldDef> = new Array();
     get fieldCount(): number {
-        return this._fields.length;
+        return this._fieldDefs.length;
     }
-    getField(x: number): string {
-        if (x < 0 || x >= this._fields.length) {
+    getFieldDef(x: number): IDaoFieldDef {
+        if (x < 0 || x >= this._fieldDefs.length) {
             return null;
         }
-        return this._fields[x];
+        return this._fieldDefs[x];
     }
 
     protected _currentRecordIndex: number = null;
@@ -52,8 +53,10 @@ export default abstract class Dao implements IDao {
     }
 
     abstract load(fields?: Array<string>, filter?: string, populate?: boolean): Promise<number>;
-    abstract save(): number;
+    abstract save(): Promise<number>;
     abstract discard(): number;
+    abstract addRecord(): IDaoRecord;
+    abstract addRecord(values?: Map<string, any>): IDaoRecord;
     abstract first(): IDaoRecord;
     abstract last(): Promise<IDaoRecord>;
     abstract prev(): IDaoRecord;
