@@ -11,41 +11,34 @@ describe("MySQL DAO tests", () => {
     let factory: any;
     let userDao: any;
 
-    beforeAll(() => {
-        return mysqlx.getSession(mysqlxTestConfig)
-            .then((s: any) => {
-                session = s;
-                userTable = session.getDefaultSchema().getTable('User');
-                return userTable.insert( ['Email', 'PasswordHash', 'PasswordSalt'])
-                    .values(['test1@test.com', 'testhashvaluethatis44charslong1234567890ABCD', 'testsaltvaluethatis44charslong1234567890ABCD'])
-                    .values(['test2@test.com', 'testhashvaluethatis44charslong1234567890ABCD', 'testsaltvaluethatis44charslong1234567890ABCD'])
-                    .values(['test3@test.com', 'testhashvaluethatis44charslong1234567890ABCD', 'testsaltvaluethatis44charslong1234567890ABCD'])
-                    .values(['test4@test.com', 'testhashvaluethatis44charslong1234567890ABCD', 'testsaltvaluethatis44charslong1234567890ABCD'])
-                    .execute();
-            })
-            .then(() => {
-                factory = new MySqlDaoFactory(mysqlxTestConfig);
-            });
+    beforeAll(async () => {
+        session = await mysqlx.getSession(mysqlxTestConfig);
+        userTable = session.getDefaultSchema().getTable('User');
+        await userTable.insert( ['Email', 'PasswordHash', 'PasswordSalt'])
+            .values(['test1@test.com', 'testhashvaluethatis44charslong1234567890ABCD', 'testsaltvaluethatis44charslong1234567890ABCD'])
+            .values(['test2@test.com', 'testhashvaluethatis44charslong1234567890ABCD', 'testsaltvaluethatis44charslong1234567890ABCD'])
+            .values(['test3@test.com', 'testhashvaluethatis44charslong1234567890ABCD', 'testsaltvaluethatis44charslong1234567890ABCD'])
+            .values(['test4@test.com', 'testhashvaluethatis44charslong1234567890ABCD', 'testsaltvaluethatis44charslong1234567890ABCD'])
+            .execute();
+        factory = new MySqlDaoFactory(mysqlxTestConfig);
     });
 
     beforeEach(async () => {
         userDao = await factory.getDao('User');
     });
 
-    afterAll(() => {
+    afterAll(async () => {
         if (session) {
-            (async () => {
+            await (async () => {
                 if (userTable) {
-                    return userTable.delete()
+                    await userTable.delete()
                         .where("Email LIKE '%@test.com'")
                         .execute();
                 }
-            })()
-            .then(() => {
-                return session.close();
-            })
+            })();
+            await session.close();
         }
-    })
+    });
 
     it("can load a dataset one row at a time using next()", async () => {
         let count = await userDao.load(null, null, false);
