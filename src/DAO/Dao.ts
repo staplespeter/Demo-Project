@@ -6,7 +6,7 @@ import IDaoRecord from "./IDaoRecord";
 import IDatasource from "./IDatasource";
 import { DaoType } from "./types";
 
-export default abstract class Dao implements IDao {
+export default class Dao implements IDao {
     private readonly _factory: IDaoFactory;
     private readonly _datasource: IDatasource = null;
 
