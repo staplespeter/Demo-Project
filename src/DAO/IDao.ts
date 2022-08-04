@@ -11,7 +11,6 @@ export default interface IDao {
     //could provide iterator.
     getRecord(x: number): IDaoRecord;
     readonly fieldCount: number;
-    getFieldDef(x: number): IDaoFieldDef;
     
 
     //JS overloading sucks. Use optional params.
@@ -21,7 +20,7 @@ export default interface IDao {
     addRecord(): IDaoRecord;
     addRecord(values?: Map<string, any>): IDaoRecord;
     first(): IDaoRecord;
-    last(): Promise<IDaoRecord>;
+    last(): IDaoRecord;
     prev(): IDaoRecord;
-    next(): Promise<IDaoRecord>;
+    next(): IDaoRecord;
 }

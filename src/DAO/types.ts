@@ -1,4 +1,6 @@
-export type DaoTypes = "User" | "UserSession";
+export type DatasourceType = "MySQL";
+
+export type DaoType = "User" | "UserSession";
 
 export type MySqlDaoFactoryConfig = {
     host: string,
