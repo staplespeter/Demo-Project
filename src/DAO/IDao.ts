@@ -15,7 +15,7 @@ export default interface IDao {
     
 
     //JS overloading sucks. Use optional params.
-    load(fields?: Array<string>, filter?: string, populate?: boolean): Promise<number>;
+    load(fields?: Array<string>, filter?: String): Promise<number>;
     save(): Promise<number>;
     discard(): number;
     addRecord(): IDaoRecord;

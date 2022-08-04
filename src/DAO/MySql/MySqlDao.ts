@@ -7,17 +7,10 @@ import IDaoRecord from "../IDaoRecord";
 import { DaoTypes } from "../types";
 
 export default class MySqlDao extends Dao {
-    private _populate: boolean = false;
     private _session: any = null;
     private _result: any = null;
 
-    //assumption is that MySQL/XDevAPI RowResult.fetchOne() will request row at  time from the server
-    //docs are not clear if this is the case or entire results set cached in client and only flushed one at a a time.
-    //https://dev.mysql.com/doc/dev/connector-nodejs/8.0/module-RowResult.html#fetchOne__anchor
-    //toArray() suggests it may be the latter - cached in client and flushed one at a time.
-    //Also as fetchOne() returns an Array, not a Promise, it must be assumed that the entire result is cached on client.
-    //todo: Ignore "populate" and also simplify code
-    async load(fields: Array<string> = null, filter: string = null, populate: boolean = true): Promise<number> {
+    async load(fields: Array<string> = null, filter: string = null): Promise<number> {
         if (!fields || fields.length == 0) {
             fields = null;
         }
@@ -25,7 +18,6 @@ export default class MySqlDao extends Dao {
             filter = null;
         }
         
-        this._populate = populate ?? false;
         this._currentRecordIndex = null;
         this._currentRecord = null;
         this._records = new Array();
@@ -54,22 +46,16 @@ export default class MySqlDao extends Dao {
                 this._fieldDefs.push(fieldDef);
             }
 
-            if (populate) {
-                let dataset = this._result.fetchAll();
-                for (let row of dataset) {
-                    this._records.push(new DaoRecord(this._fieldDefs, row));
-                }
+            let dataset = this._result.fetchAll();
+            for (let row of dataset) {
+                this._records.push(new DaoRecord(this._fieldDefs, row));
             }
-            else {
-                this._records.push(new DaoRecord(this._fieldDefs, this._result.fetchOne()));
-            }
+            
             if (this._records.length > 0) {
                 this._currentRecordIndex = 0;
                 this._currentRecord = this._records[this._currentRecordIndex];
                 this._bof = true;
-            }
-            if (populate && this._currentRecordIndex == this._records.length - 1) {
-                this._eof = true;
+                this._eof = this._currentRecordIndex == this._records.length - 1;
             }
         }
         catch (e: any) {
@@ -79,7 +65,7 @@ export default class MySqlDao extends Dao {
         }
         finally {
             try {
-                if ((this._session && populate) || (this._session && error)) {
+                if (this._session && error) {
                     await this._session.close();
                     this._session = null;
                 }
@@ -96,51 +82,16 @@ export default class MySqlDao extends Dao {
         if (this._currentRecordIndex == null) {
             return null;
         }
-        if (this._eof) {
-            return this._currentRecord;
-        }
-
-        //if not populated and at the end of the records and session still open
-        //then try to load the next one
-        if (!this._populate
-            && this._session
-            && (this._currentRecordIndex == this._records.length - 1))
-        {
-            let error = false;
-            let dataset: any;
-            try {
-                dataset = this._result.fetchOne();
-                if (dataset) {
-                    this._records.push(new DaoRecord(this._fieldDefs, dataset));
-                }
+        if (!this._eof) {
+            if (this._currentRecordIndex < this._records.length - 1) {
+                this._currentRecordIndex++;
+                this._currentRecord = this._records[this._currentRecordIndex];
             }
-            catch (e: any) {
-                console.log(e);
-                error = true;
-                throw e;
+            this._bof = this._currentRecordIndex == 0;
+            if (this._currentRecordIndex == this._records.length - 1)
+            {
+                this._eof = true;
             }
-            finally {
-                try {
-                    if (!dataset || error) {
-                        await this._session.close();
-                        this._session = null;
-                    }
-                }
-                catch (e: any) {
-                    console.log(e);
-                }
-            }
-        }
-
-        if (this._currentRecordIndex < this._records.length - 1) {
-            this._currentRecordIndex++;
-            this._currentRecord = this._records[this._currentRecordIndex];
-        }
-        this._bof = this._currentRecordIndex == 0;
-        if ((this._populate || this._session == null)
-            && this._currentRecordIndex == this._records.length - 1)
-        {
-            this._eof = true;
         }
 
         return this._currentRecord;
@@ -154,39 +105,10 @@ export default class MySqlDao extends Dao {
             return this._currentRecord;
         }
 
-        //if not populated and session still open
-        //then try to load the rest of the records
-        if (!this._populate && this._session) {
-            let error = false;
-            let dataset: any;
-            try {
-                dataset = this._result.fetchAll();
-                for (let row of dataset) {
-                    this._records.push(new DaoRecord(this._fieldDefs, row));
-                }
-            }
-            catch (e: any) {
-                console.log(e);
-                error = true;
-                throw e;
-            }
-            finally {
-                try {
-                    await this._session.close();
-                    this._session = null;
-                }
-                catch (e: any) {
-                    console.log(e);
-                }
-            }
-        }
-
         this._currentRecordIndex = this._records.length - 1;
         this._currentRecord = this._records[this._currentRecordIndex];
         this._bof = this._currentRecordIndex == 0;
-        if (this._populate || this._session == null) {
-            this._eof = true;
-        }
+        this._eof = true;
 
         return this._currentRecord;
     }
