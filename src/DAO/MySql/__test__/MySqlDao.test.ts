@@ -40,7 +40,7 @@ describe("MySQL DAO tests", () => {
         }
     });
 
-    it("can load a dataset all at once", async () => {
+    it("can load a dataset all at once and navigate", async () => {
         let count = await userDao.load();
         expect(userDao.fieldCount).toEqual(5);
         expect(userDao.getFieldDef(0).name).toEqual('Id');
@@ -78,6 +78,21 @@ describe("MySQL DAO tests", () => {
         record = userDao.first();
         expect(userDao.recordCount).toEqual(4);
         expect(record).toEqual(userDao.currentRecord);
+        expect(userDao.currentRecord).toEqual(userDao.getRecord(0));
+        expect(userDao.bof).toEqual(true);
+        expect(userDao.eof).toEqual(false);
+    });
+
+    it("can load a dataset with a row limit", async () => {
+        let count = await userDao.load(null, null, 2);
+        expect(userDao.fieldCount).toEqual(5);
+        expect(userDao.getFieldDef(0).name).toEqual('Id');
+        expect(userDao.getFieldDef(1).name).toEqual('Email');
+        expect(userDao.getFieldDef(2).name).toEqual('PasswordHash');
+        expect(userDao.getFieldDef(3).name).toEqual('PasswordSalt');
+        expect(userDao.getFieldDef(4).name).toEqual('DateRegistered');
+        expect(count).toEqual(2);
+        expect(userDao.recordCount).toEqual(2);
         expect(userDao.currentRecord).toEqual(userDao.getRecord(0));
         expect(userDao.bof).toEqual(true);
         expect(userDao.eof).toEqual(false);

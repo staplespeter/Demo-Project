@@ -10,7 +10,7 @@ export default class MySqlDao extends Dao {
     private _session: any = null;
     private _result: any = null;
 
-    async load(fields: Array<string> = null, filter: string = null): Promise<number> {
+    async load(fields: Array<string> = null, filter: string = null, maxRows: number = 100): Promise<number> {
         if (!fields || fields.length == 0) {
             fields = null;
         }
@@ -31,6 +31,7 @@ export default class MySqlDao extends Dao {
             let query = this._session.getDefaultSchema().getTable(this.objectName);
             query = fields ? query.select(fields) : query.select();
             query = filter ? query.where(filter) : query;
+            query = query.limit(maxRows);
             this._result = await query.execute();
 
             let columns = this._result.getColumns();

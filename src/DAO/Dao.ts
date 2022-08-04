@@ -52,7 +52,7 @@ export default abstract class Dao implements IDao {
         this.objectName = objectName;
     }
 
-    abstract load(fields?: Array<string>, filter?: string): Promise<number>;
+    abstract load(fields?: Array<string>, filter?: string, maxRows?: number): Promise<number>;
     abstract save(): Promise<number>;
     abstract discard(): number;
     abstract addRecord(): IDaoRecord;
