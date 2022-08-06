@@ -9,9 +9,12 @@ import IDaoRecord from "../IDaoRecord";
 import { DaoType } from "../types";
 
 export default class MySqlDatasource extends Datasource {
+    static otherFn(): number {
+        return 1;
+    }
+
     static async getFieldDefs(objectName: DaoType): Promise<Array<IDaoFieldDef>> {
         let session: any = null;
-        let localFieldDefs: Array<IDaoFieldDef> = null;
 
         try {
             session = await mysqlx.getSession(mysqlxConfig);
@@ -42,9 +45,8 @@ export default class MySqlDatasource extends Datasource {
         }
     }
 
-    constructor(daoFactory: IDaoFactory, objectName: DaoType) {
+    constructor(objectName: DaoType) {
         super();
-        this._factory = daoFactory;
         this._objectName = objectName;
     }
 
@@ -68,7 +70,7 @@ export default class MySqlDatasource extends Datasource {
             let result = await query.execute();
 
             let columns = result.getColumns();
-            let fieldDefs = DaoFactory.fieldDefs.get(this._objectName as DaoType);
+            let fieldDefs = MySqlDatasource.fieldDefs.get(this._objectName as DaoType);
             if (!fieldDefs) {
                 throw new ReferenceError(`Field definitions for object ${this._objectName} not found`);
             }
@@ -100,6 +102,13 @@ export default class MySqlDatasource extends Datasource {
 
     async save(recordsToUpdate: Array<IDaoRecord>, recordsToInsert: Array<IDaoRecord>): Promise<number> {
         let session: any = null;
+        if (!recordsToUpdate) {
+            recordsToUpdate = [];
+        }
+        if (!recordsToInsert) {
+            recordsToInsert = [];
+        }
+
         try {
             session = await mysqlx.getSession(mysqlxConfig);
             let table = session.getDefaultSchema().getTable(this.objectName);

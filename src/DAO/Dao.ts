@@ -1,13 +1,9 @@
 import DaoRecord from "./DaoRecord";
 import IDao from "./IDao";
-import IDaoFactory from "./IDaoFactory";
-import IDaoFieldDef from "./IDaoFieldDef";
 import IDaoRecord from "./IDaoRecord";
 import IDatasource from "./IDatasource";
-import { DaoType } from "./types";
 
 export default class Dao implements IDao {
-    private readonly _factory: IDaoFactory;
     private readonly _datasource: IDatasource = null;
 
     readonly objectName: string;
@@ -43,8 +39,7 @@ export default class Dao implements IDao {
     }
 
 
-    constructor(daoFactory: IDaoFactory, datasource: IDatasource) {
-        this._factory = daoFactory;
+    constructor(datasource: IDatasource) {
         this._datasource = datasource;
     }
 
@@ -56,8 +51,10 @@ export default class Dao implements IDao {
         this._eof = false;
 
         let dataset = await this._datasource.load(fields, filter, maxRows);
-        for (let row of dataset) {
-            this._records.push(new DaoRecord(this._datasource.fieldDefs, row));
+        if (dataset) {
+            for (let row of dataset) {
+                this._records.push(new DaoRecord(this._datasource.fieldDefs, row));
+            }
         }
         
         if (this._records.length > 0) {

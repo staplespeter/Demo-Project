@@ -1,10 +1,9 @@
-import IDaoFactory from "./IDaoFactory";
 import IDaoFieldDef from "./IDaoFieldDef";
 import IDaoRecord from "./IDaoRecord";
 import { DaoType } from "./types";
 
 export default interface IDatasource {
-    readonly factory: IDaoFactory;
+    //static readonly fieldDefs: Map<DaoType, Array<IDaoFieldDef>>;
     readonly objectName: DaoType;
     fieldDefs: Array<IDaoFieldDef>;
 
