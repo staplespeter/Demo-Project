@@ -1,16 +1,18 @@
 const mysqlx = require('@mysql/xdevapi');
 import { mysqlxConfig } from "../appdata";
-import DaoFactory from "../DaoFactory";
 import DaoFieldDef from "../DaoFieldDef";
-import Datasource from "../Datasource";
-import IDaoFactory from "../IDaoFactory";
 import IDaoFieldDef from "../IDaoFieldDef";
 import IDaoRecord from "../IDaoRecord";
+import IDatasource from "../IDatasource";
 import { DaoType } from "../types";
 
-export default class MySqlDatasource extends Datasource {
-    static otherFn(): number {
-        return 1;
+export default class MySqlDatasource implements IDatasource {//extends Datasource {
+    static readonly fieldDefs: Map<DaoType, Array<IDaoFieldDef>> = new Map<DaoType, Array<IDaoFieldDef>>();
+    fieldDefs: Array<IDaoFieldDef> = new Array();
+
+    protected _objectName: DaoType;
+    get objectName(): DaoType {
+        return this._objectName;
     }
 
     static async getFieldDefs(objectName: DaoType): Promise<Array<IDaoFieldDef>> {
@@ -34,7 +36,7 @@ export default class MySqlDatasource extends Datasource {
 
             return localFieldDefs;
         }
-        catch (e: any) {
+        catch (e) {
             console.log(e);
             throw e;
         }
@@ -46,7 +48,7 @@ export default class MySqlDatasource extends Datasource {
     }
 
     constructor(objectName: DaoType) {
-        super();
+        //super();
         this._objectName = objectName;
     }
 
@@ -84,7 +86,7 @@ export default class MySqlDatasource extends Datasource {
 
             return result.fetchAll();
         }
-        catch (e: any) {
+        catch (e) {
             console.log(e);
             throw e;
         }
@@ -94,7 +96,7 @@ export default class MySqlDatasource extends Datasource {
                     await session.close();
                 }
             }
-            catch (e: any) {
+            catch (e) {
                 console.log(e);
             }
         }
@@ -171,7 +173,7 @@ export default class MySqlDatasource extends Datasource {
 
             return recordsToUpdate.length + recordsToInsert.length;
         }
-        catch (e: any) {
+        catch (e) {
             if (session) {
                 session.rollback();
             }
@@ -185,7 +187,7 @@ export default class MySqlDatasource extends Datasource {
                     await session.close();
                 }
             }
-            catch (e: any) {
+            catch (e) {
                 console.log(e);
             }
         }

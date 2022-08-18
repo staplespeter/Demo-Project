@@ -1,6 +1,3 @@
-import DaoRecord from "../DaoRecord";
-import DaoFieldDef from "../DaoFieldDef";
-import DaoFactory from "../DaoFactory";
 import Dao from "../Dao";
 import IDao from "../IDao";
 //import MySqlDatasource from "../MySql/MySqlDatasource";
@@ -22,6 +19,8 @@ describe("DAO tests", () => {
 
     it("can load a dataset and navigate", async () => {
         let count = await userDao.load();
+        expect(mockLoad).toBeCalledTimes(1);
+        expect(mockLoad).toBeCalledWith(undefined, undefined, undefined);
         expect(userDao.fieldCount).toEqual(2);
         expect(count).toEqual(4);
         expect(userDao.recordCount).toEqual(4);
@@ -74,11 +73,14 @@ describe("DAO tests", () => {
 
     it("can load a dataset with fields, filter and limit", async () => {
         await userDao.load(['TestField'], 'TestFilter', 2);
+        expect(mockLoad).toBeCalledTimes(1);
         expect(mockLoad).toBeCalledWith(['TestField'], 'TestFilter', 2);
     });
 
     it("can load a dataset with 1 row and navigate", async () => {
         let count = await userDao.load(null, null, 1);
+        expect(mockLoad).toBeCalledTimes(1);
+        expect(mockLoad).toBeCalledWith(null, null, 1);
         expect(count).toEqual(1);
         expect(userDao.recordCount).toEqual(1);
         expect(userDao.currentRecord).toEqual(userDao.getRecord(0));
@@ -118,6 +120,8 @@ describe("DAO tests", () => {
 
     it("can load a dataset with no rows and navigate", async () => {
         let count = await userDao.load(null, null, 0);
+        expect(mockLoad).toBeCalledTimes(1);
+        expect(mockLoad).toBeCalledWith(null, null, 0);
         expect(count).toEqual(0);
         expect(userDao.recordCount).toEqual(0);
         expect(userDao.currentRecord).toEqual(null);
@@ -171,7 +175,8 @@ describe("DAO tests", () => {
 
         let count = await userDao.save();
         expect(count).toEqual(2);
-        expect(mockSave).toBeCalled();
+        expect(mockSave).toHaveBeenCalledTimes(1);
+        expect(mockSave).toHaveBeenCalledWith([record1, record2], []);
     });
 
     it("can insert rows in the dataset", async () => {
@@ -191,48 +196,46 @@ describe("DAO tests", () => {
         expect(record2.isNew).toEqual(true);
         
         let count = await userDao.save();
-        expect(count).toEqual(2);
-        expect(mockSave).toBeCalled();
+        expect(mockSave).toHaveBeenCalledTimes(1);
+        expect(mockSave).toHaveBeenCalledWith([], [record1, record2]);
     });
 
 
-    // it("can discard changes to the dataset", async () => {
-    //     await userDao.load();
-    //     let record = userDao.getRecord(1);
-    //     expect(record.getField('Email').value).toEqual('test2@test.com');
-    //     expect(record.getField('PasswordHash').value).toEqual('testhashvaluethatis44charslong1234567890ABCD');
-    //     expect(record.getField('PasswordSalt').value).toEqual('testsaltvaluethatis44charslong1234567890ABCD');
-    //     expect(record.hasChanged).toEqual(false);
+    it("can discard changes to the dataset", async () => {
+        await userDao.load();
+        let record = userDao.getRecord(1);
+        expect(record.getField('TestField1').value).toEqual('TestField1Value2');
+        expect(record.getField('TestField2').value).toEqual('TestField2Value2');
+        expect(record.hasChanged).toEqual(false);
 
-    //     record.getField('PasswordHash').value = 'testhashvaluethatis44charslong1234567890ABCE';
-    //     record.getField('PasswordSalt').value = 'testsaltvaluethatis44charslong1234567890ABCF';
-    //     expect(record.getField('PasswordHash').value).toEqual('testhashvaluethatis44charslong1234567890ABCE');
-    //     expect(record.getField('PasswordSalt').value).toEqual('testsaltvaluethatis44charslong1234567890ABCF');
-    //     expect(record.hasChanged).toEqual(true);
-
-
-    //     record = userDao.getRecord(3);
-    //     expect(record.getField('Email').value).toEqual('test4@test.com');
-    //     expect(record.getField('PasswordHash').value).toEqual('testhashvaluethatis44charslong1234567890ABCD');
-    //     expect(record.getField('PasswordSalt').value).toEqual('testsaltvaluethatis44charslong1234567890ABCD');
-    //     expect(record.hasChanged).toEqual(false);
-
-    //     record.getField('PasswordHash').value = 'testhashvaluethatis44charslong1234567890ABCG';
-    //     record.getField('PasswordSalt').value = 'testsaltvaluethatis44charslong1234567890ABCH';
-    //     expect(record.getField('PasswordHash').value).toEqual('testhashvaluethatis44charslong1234567890ABCG');
-    //     expect(record.getField('PasswordSalt').value).toEqual('testsaltvaluethatis44charslong1234567890ABCH');
-    //     expect(record.hasChanged).toEqual(true);
+        record.getField('TestField1').value = 'NewTestField1Value2';
+        record.getField('TestField2').value = 'NewTestField2Value2';
+        expect(record.getField('TestField1').value).toEqual('TestField1Value2');
+        expect(record.getField('TestField2').value).toEqual('NewTestField2Value2');
+        expect(record.hasChanged).toEqual(true);
 
 
-    //     let count = userDao.discard();
-    //     expect(count).toEqual(2);
-    //     record = userDao.getRecord(1);
-    //     expect(record.getField('Email').value).toEqual('test2@test.com');
-    //     expect(record.getField('PasswordHash').value).toEqual('testhashvaluethatis44charslong1234567890ABCD');
-    //     expect(record.getField('PasswordSalt').value).toEqual('testsaltvaluethatis44charslong1234567890ABCD');
-    //     record = userDao.getRecord(3);
-    //     expect(record.getField('Email').value).toEqual('test4@test.com');
-    //     expect(record.getField('PasswordHash').value).toEqual('testhashvaluethatis44charslong1234567890ABCD');
-    //     expect(record.getField('PasswordSalt').value).toEqual('testsaltvaluethatis44charslong1234567890ABCD');
-    // });
+        record = userDao.getRecord(3);
+        expect(record.getField('TestField1').value).toEqual('TestField1Value4');
+        expect(record.getField('TestField2').value).toEqual('TestField2Value4');
+        expect(record.hasChanged).toEqual(false);
+
+        record.getField('TestField1').value = 'NewTestField1Value4';
+        record.getField('TestField2').value = 'NewTestField2Value4';
+        expect(record.getField('TestField1').value).toEqual('TestField1Value4');
+        expect(record.getField('TestField2').value).toEqual('NewTestField2Value4');
+        expect(record.hasChanged).toEqual(true);
+
+
+        let count = userDao.discard();
+        expect(count).toEqual(2);
+        record = userDao.getRecord(1);
+        expect(record.getField('TestField1').value).toEqual('TestField1Value2');
+        expect(record.getField('TestField2').value).toEqual('TestField2Value2');
+        expect(record.hasChanged).toEqual(false);
+        record = userDao.getRecord(3);
+        expect(record.getField('TestField1').value).toEqual('TestField1Value4');
+        expect(record.getField('TestField2').value).toEqual('TestField2Value4');
+        expect(record.hasChanged).toEqual(false);
+    });
 });

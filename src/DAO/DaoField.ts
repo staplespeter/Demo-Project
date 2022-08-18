@@ -14,7 +14,7 @@ export default class DaoField implements IDaoField {
         return this._hasChanged;
     }
 
-    private _oldValue: any = null;
+    private _oldValue: any = undefined;
     get oldValue(): any {
         return this._oldValue;
     }
@@ -31,6 +31,11 @@ export default class DaoField implements IDaoField {
 
         if (this._isNew || !this.fieldDef.isPrimaryKey) {
             this._value = v;
+
+            if (v == this._oldValue) {
+                this._oldValue = undefined;
+                this._hasChanged = false;
+            }
         }
     }
 
@@ -44,7 +49,7 @@ export default class DaoField implements IDaoField {
     discard(): void {
         if (!this._isNew) {
             this._value = this._oldValue;
-            this._oldValue = null;
+            this._oldValue = undefined;
             this._hasChanged = false;
         }
     }
@@ -54,7 +59,7 @@ export default class DaoField implements IDaoField {
             this._isNew = false;
         }
         else {
-            this._oldValue = null;
+            this._oldValue = undefined;
             this._hasChanged = false;
         }
     }

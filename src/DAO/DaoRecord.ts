@@ -64,10 +64,11 @@ export default class DaoRecord implements IDaoRecord {
 
     // async save(table: any): Promise<void> {}
 
-    discard(): void {
+    discard(): number {
         let changedFields = this._fields.filter(f => f.hasChanged);
         for (let field of changedFields) {
             field.discard();
         }
+        return changedFields.filter(f => !f.hasChanged).length;
     }
 }

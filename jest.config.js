@@ -1,10 +1,10 @@
-/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
   verbose: true,
   preset: 'ts-jest',
   testEnvironment: 'node',
   "testMatch": [
     "**/*.steps.js",
-    "**/*.test.ts"
+    "**/*.test.ts",
+    "**/*.test.js"
   ],
 };

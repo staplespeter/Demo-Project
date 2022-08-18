@@ -10,7 +10,7 @@ describe("DaoField tests", () => {
         expect(field.fieldDef).toEqual(fieldDef);
         expect(field.isNew).toEqual(false);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeNull();
+        expect(field.oldValue).toBeUndefined();
         expect(field.value).toEqual('TestValue');
     });
 
@@ -34,7 +34,7 @@ describe("DaoField tests", () => {
         field.value = 'NewTestValue';
         expect(field.isNew).toEqual(false);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeNull();
+        expect(field.oldValue).toBeUndefined();
         expect(field.value).toEqual('TestValue');
     });
 
@@ -44,7 +44,14 @@ describe("DaoField tests", () => {
         field.discard();
         expect(field.isNew).toEqual(false);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeNull();
+        expect(field.oldValue).toBeUndefined();
+        expect(field.value).toEqual('TestValue');
+
+        field.value = 'NewTestValue';
+        field.value = 'TestValue';
+        expect(field.isNew).toEqual(false);
+        expect(field.hasChanged).toEqual(false);
+        expect(field.oldValue).toBeUndefined();
         expect(field.value).toEqual('TestValue');
     });
 
@@ -54,7 +61,7 @@ describe("DaoField tests", () => {
         field.save();
         expect(field.isNew).toEqual(false);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeNull();
+        expect(field.oldValue).toBeUndefined();
         expect(field.value).toEqual('NewTestValue');
     });
 
@@ -63,7 +70,7 @@ describe("DaoField tests", () => {
         expect(field.fieldDef).toEqual(fieldDef);
         expect(field.isNew).toEqual(true);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeNull();
+        expect(field.oldValue).toBeUndefined();
         expect(field.value).toEqual('TestValue');
     });
 
@@ -72,13 +79,13 @@ describe("DaoField tests", () => {
         field.value = 'NewTestValue';
         expect(field.isNew).toEqual(true);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeNull();
+        expect(field.oldValue).toBeUndefined();
         expect(field.value).toEqual('NewTestValue');
 
         field.value = 'NewTestValue2';
         expect(field.isNew).toEqual(true);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeNull();
+        expect(field.oldValue).toBeUndefined();
         expect(field.value).toEqual('NewTestValue2');
     });
 
@@ -88,7 +95,7 @@ describe("DaoField tests", () => {
         field.value = 'NewTestValue';
         expect(field.isNew).toEqual(true);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeNull();
+        expect(field.oldValue).toBeUndefined();
         expect(field.value).toEqual('NewTestValue');
     });
 
@@ -98,7 +105,7 @@ describe("DaoField tests", () => {
         field.discard();
         expect(field.isNew).toEqual(true);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeNull();
+        expect(field.oldValue).toBeUndefined();
         expect(field.value).toEqual('NewTestValue');
     });
 
@@ -108,7 +115,7 @@ describe("DaoField tests", () => {
         field.save();
         expect(field.isNew).toEqual(false);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeNull();
+        expect(field.oldValue).toBeUndefined();
         expect(field.value).toEqual('NewTestValue');
     });
 });

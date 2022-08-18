@@ -4,14 +4,11 @@ import IDaoRecord from "../../IDaoRecord";
 import MySqlDatasource from "../MySqlDatasource";
 jest.mock("../MySqlDatasource");
 
-//even though property getters are documented in Jest they do not work @28.1.3.  known issue 
-//https://github.com/facebook/jest/issues/9675
-//using workaround.
-// export const mockGetObjectName = jest
-//     .spyOn(MySqlDatasource.prototype, 'objectName', 'get')
-//     .mockReturnValue('User');
-Object.defineProperty(MySqlDatasource.prototype, 'objectName', jest.fn(() => { return 'User' }));
-//console.log(Object.getOwnPropertyDescriptor(MySqlDatasource.prototype, 'objectName'));
+//even though property getters are documented in Jest they do not work @28.1.3.
+//fixed
+export const mockGetObjectName = jest
+    .spyOn(MySqlDatasource.prototype, 'objectName', 'get')
+    .mockReturnValue('User');
 
 //todo: mock these field defs?
 const mockFieldDefs: Array<IDaoFieldDef> = [
@@ -41,7 +38,7 @@ const mockLoadFn = async function (fields: Array<string> = null, filter: string 
 }
 export const mockLoad = jest
     .spyOn(MySqlDatasource.prototype, 'load')
-    .mockImplementation((fields, filter, maxRows) => {
+    .mockImplementation((fields: Array<string> = null, filter: string = null, maxRows: number = 100) => {
         return mockLoadFn(fields, filter, maxRows);
     });
 

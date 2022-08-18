@@ -90,34 +90,39 @@ describe("DaoRecord tests", () => {
     it("can discard changes on an existing record", () => {
         let record = new DaoRecord(fieldDefs, [1, 'TestValue2']);
         expect(record.getFieldByIndex(1).value).toEqual('TestValue2');
-        expect(record.getFieldByIndex(1).oldValue).toBeNull();
+        expect(record.getFieldByIndex(1).oldValue).toBeUndefined();
         expect(record.hasChanged).toEqual(false);
         
+        record.getFieldByIndex(0).value = 2;
         record.getFieldByIndex(1).value = 'NewTestValue2';
+        expect(record.getFieldByIndex(0).value).toEqual(1);
+        expect(record.getFieldByIndex(0).oldValue).toBeUndefined();
         expect(record.getFieldByIndex(1).value).toEqual('NewTestValue2');
         expect(record.getFieldByIndex(1).oldValue).toEqual('TestValue2');
         expect(record.hasChanged).toEqual(true);
         
         record.discard();
+        expect(record.getFieldByIndex(0).value).toEqual(1);
+        expect(record.getFieldByIndex(0).oldValue).toBeUndefined();
         expect(record.getFieldByIndex(1).value).toEqual('TestValue2');
-        expect(record.getFieldByIndex(1).oldValue).toBeNull();
+        expect(record.getFieldByIndex(1).oldValue).toBeUndefined();
         expect(record.hasChanged).toEqual(false);
     });
 
     it("cannot discard changes on a new record", () => {
         let record = new DaoRecord(fieldDefs, [null, 'TestValue2'], true);
         expect(record.getFieldByIndex(1).value).toEqual('TestValue2');
-        expect(record.getFieldByIndex(1).oldValue).toBeNull();
+        expect(record.getFieldByIndex(1).oldValue).toBeUndefined();
         expect(record.hasChanged).toEqual(false);
 
         record.getFieldByIndex(1).value = 'NewTestValue2';
         expect(record.getFieldByIndex(1).value).toEqual('NewTestValue2');
-        expect(record.getFieldByIndex(1).oldValue).toBeNull();
+        expect(record.getFieldByIndex(1).oldValue).toBeUndefined();
         expect(record.hasChanged).toEqual(false);
         
         record.discard();
         expect(record.getFieldByIndex(1).value).toEqual('NewTestValue2');
-        expect(record.getFieldByIndex(1).oldValue).toBeNull();
+        expect(record.getFieldByIndex(1).oldValue).toBeUndefined();
         expect(record.hasChanged).toEqual(false);
     });
 

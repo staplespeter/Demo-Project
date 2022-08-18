@@ -11,5 +11,5 @@ export default interface IDaoRecord {
     //todo: record specific load and save
     //load(): void;
     //save(table: any): Promise<void>;
-    discard(): void;
+    discard(): number;
 }
