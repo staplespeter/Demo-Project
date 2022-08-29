@@ -1,8 +1,8 @@
-import IDaoField from "./IDaoField";
-import IDaoFieldDef from "./IDaoFieldDef";
+import IField from "./IField";
+import IFieldDef from "./IFieldDef";
 
-export default class DaoField implements IDaoField {
-    readonly fieldDef: IDaoFieldDef;
+export default class Field implements IField {
+    readonly fieldDef: IFieldDef;
     
     private _isNew: boolean;
     get isNew(): boolean {
@@ -40,7 +40,7 @@ export default class DaoField implements IDaoField {
     }
 
 
-    constructor(fieldDef: IDaoFieldDef, value: any, isNew: boolean = false) {
+    constructor(fieldDef: IFieldDef, value: any, isNew: boolean = false) {
         this.fieldDef = fieldDef;
         this._value = value;
         this._isNew = isNew;

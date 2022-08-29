@@ -1,7 +1,7 @@
 const mysqlx = require('@mysql/xdevapi');
-import DaoFieldDef from "../../DaoFieldDef";
-import DaoRecord from "../../DaoRecord";
-import IDaoFieldDef from "../../IDaoFieldDef";
+import FieldDef from "../../FieldDef";
+import Record from "../../Record";
+import IFieldDef from "../../IFieldDef";
 import { mysqlxTestConfig } from "../../__test__/appdata";
 import MySqlDatasource from "../MySqlDatasource";
 
@@ -159,16 +159,16 @@ describe('MySqlData source tests', () => {
 
     it("can update rows in the dataset", async () => {
         let dataset = await userDatasource.load();
-        let recordsToUpdate = new Array<DaoRecord>(2);
+        let recordsToUpdate = new Array<Record>(2);
 
-        recordsToUpdate[0] = new DaoRecord(userDatasource.fieldDefs, dataset[0]);
+        recordsToUpdate[0] = new Record(userDatasource.fieldDefs, dataset[0]);
         expect(recordsToUpdate[0].getField('Email').value).toEqual('test1@test.com');
         expect(recordsToUpdate[0].getField('PasswordHash').value).toEqual('testhashvaluethatis44charslong1234567890ABCD');
         expect(recordsToUpdate[0].getField('PasswordSalt').value).toEqual('testsaltvaluethatis44charslong1234567890ABCD');
         recordsToUpdate[0].getField('PasswordHash').value = 'testhashvaluethatis44charslong1234567890ABCE';
         recordsToUpdate[0].getField('PasswordSalt').value = 'testsaltvaluethatis44charslong1234567890ABCF';
 
-        recordsToUpdate[1] = new DaoRecord(userDatasource.fieldDefs, dataset[2]);
+        recordsToUpdate[1] = new Record(userDatasource.fieldDefs, dataset[2]);
         expect(recordsToUpdate[1].getField('Email').value).toEqual('test3@test.com');
         expect(recordsToUpdate[1].getField('PasswordHash').value).toEqual('testhashvaluethatis44charslong1234567890ABCD');
         expect(recordsToUpdate[1].getField('PasswordSalt').value).toEqual('testsaltvaluethatis44charslong1234567890ABCD');
@@ -192,16 +192,16 @@ describe('MySqlData source tests', () => {
 
     it("cannot update rows in the dataset when no primary key is defined", async () => {
         let userFieldDefs = MySqlDatasource.fieldDefs.get('User');
-        let pkFieldDefIndex = userFieldDefs.findIndex((fd: IDaoFieldDef) => fd.isPrimaryKey);
+        let pkFieldDefIndex = userFieldDefs.findIndex((fd: IFieldDef) => fd.isPrimaryKey);
         let pkFieldDef = userFieldDefs[pkFieldDefIndex];
-        let nonPkFieldDef = new DaoFieldDef('Id');
+        let nonPkFieldDef = new FieldDef('Id');
         userFieldDefs[pkFieldDefIndex] = nonPkFieldDef;
 
         try {        
             let dataset = await userDatasource.load();
-            let recordsToUpdate = new Array<DaoRecord>(1);
+            let recordsToUpdate = new Array<Record>(1);
 
-            recordsToUpdate[0] = new DaoRecord(userDatasource.fieldDefs, dataset[1]);
+            recordsToUpdate[0] = new Record(userDatasource.fieldDefs, dataset[1]);
             expect(recordsToUpdate[0].getField('Email').value).toEqual('test2@test.com');
             expect(recordsToUpdate[0].getField('PasswordHash').value).toEqual('testhashvaluethatis44charslong1234567890ABCD');
             expect(recordsToUpdate[0].getField('PasswordSalt').value).toEqual('testsaltvaluethatis44charslong1234567890ABCD');
@@ -218,14 +218,14 @@ describe('MySqlData source tests', () => {
 
     it("can insert rows in the dataset", async () => {
         let fieldDefs = [
-            new DaoFieldDef('Id', true),
-            new DaoFieldDef('Email'),
-            new DaoFieldDef('PasswordHash'),
-            new DaoFieldDef('PasswordSalt'),
-            new DaoFieldDef('DateRegistered'),
+            new FieldDef('Id', true),
+            new FieldDef('Email'),
+            new FieldDef('PasswordHash'),
+            new FieldDef('PasswordSalt'),
+            new FieldDef('DateRegistered'),
         ];
 
-        let recordsToInsert = new Array<DaoRecord>(2);
+        let recordsToInsert = new Array<Record>(2);
         //todo: have DAO store the PK field separately so it cannot/does not need to be set.
         //todo: have the DaoRecord accept a Map instead of an array so do not have to ensure
         //order of elements matched the order of field defs.
@@ -234,13 +234,13 @@ describe('MySqlData source tests', () => {
             'testhashvaluethatis44charslong1234567890ABCD',
             'testsaltvaluethatis44charslong1234567890ABCD',
             null];
-        recordsToInsert[0] = new DaoRecord(fieldDefs, row, true);
+        recordsToInsert[0] = new Record(fieldDefs, row, true);
         row = [null,
             'test6@test.com',
             'testhashvaluethatis44charslong1234567890ABCD',
             'testsaltvaluethatis44charslong1234567890ABCD',
             '2000-01-01T00:00:00'];
-        recordsToInsert[1] = new DaoRecord(fieldDefs, row, true);
+        recordsToInsert[1] = new Record(fieldDefs, row, true);
         expect(recordsToInsert[0].getField('Id').value).toBeNull();
         expect(recordsToInsert[1].getField('Id').value).toBeNull();
         

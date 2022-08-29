@@ -1,12 +1,12 @@
-import DaoFieldDef from "../DaoFieldDef";
+import FieldDef from "../FieldDef";
 
 describe('DaoField tests', () => {
     it('can initialise correctly', () => {
-        let fieldDef = new DaoFieldDef('TestDef');
+        let fieldDef = new FieldDef('TestDef');
         expect(fieldDef.name).toEqual('TestDef');
         expect(fieldDef.isPrimaryKey).toEqual(false);
 
-        fieldDef = new DaoFieldDef('TestDef', true);
+        fieldDef = new FieldDef('TestDef', true);
         expect(fieldDef.name).toEqual('TestDef');
         expect(fieldDef.isPrimaryKey).toEqual(true);
     });

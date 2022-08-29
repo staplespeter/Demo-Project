@@ -1,12 +1,12 @@
-import IDaoField from "./IDaoField";
+import IField from "./IField";
 
-export default interface IDaoRecord {
+export default interface IRecord {
     isNew: boolean;
     hasChanged: boolean;
-    readonly primaryKeyField: IDaoField;
+    readonly primaryKeyField: IField;
     readonly fieldCount: number;
-    getField(name: string): IDaoField;
-    getFieldByIndex(x: number): IDaoField;
+    getField(name: string): IField;
+    getFieldByIndex(x: number): IField;
 
     //todo: record specific load and save
     //load(): void;

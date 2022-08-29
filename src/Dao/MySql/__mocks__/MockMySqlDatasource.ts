@@ -1,6 +1,6 @@
-import DaoFieldDef from "../../DaoFieldDef";
-import IDaoFieldDef from "../../IDaoFieldDef";
-import IDaoRecord from "../../IDaoRecord";
+import FieldDef from "../../FieldDef";
+import IFieldDef from "../../IFieldDef";
+import IRecord from "../../IRecord";
 import MySqlDatasource from "../MySqlDatasource";
 jest.mock("../MySqlDatasource");
 
@@ -11,9 +11,9 @@ export const mockGetObjectName = jest
     .mockReturnValue('User');
 
 //todo: mock these field defs?
-const mockFieldDefs: Array<IDaoFieldDef> = [
-    new DaoFieldDef('TestField1', true),
-    new DaoFieldDef('TestField2')
+const mockFieldDefs: Array<IFieldDef> = [
+    new FieldDef('TestField1', true),
+    new FieldDef('TestField2')
 ];
 export const mockGetFieldDefs = jest
     .spyOn(MySqlDatasource, 'getFieldDefs')
@@ -42,12 +42,12 @@ export const mockLoad = jest
         return mockLoadFn(fields, filter, maxRows);
     });
 
-const mockSaveFn = async function (recordsToUpdate: Array<IDaoRecord>, recordsToInsert: Array<IDaoRecord>) {
+const mockSaveFn = async function (recordsToUpdate: Array<IRecord>, recordsToInsert: Array<IRecord>) {
     return recordsToUpdate.length + recordsToInsert.length;
 };
 export const mockSave = jest
     .spyOn(MySqlDatasource.prototype, 'save')
-    .mockImplementation((recordsToUpdate: Array<IDaoRecord>, recordsToInsert: Array<IDaoRecord>) => {
+    .mockImplementation((recordsToUpdate: Array<IRecord>, recordsToInsert: Array<IRecord>) => {
         return mockSaveFn(recordsToUpdate, recordsToInsert);
     });
 

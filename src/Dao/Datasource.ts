@@ -1,11 +1,11 @@
-import IDaoFieldDef from "./IDaoFieldDef";
-import IDaoRecord from "./IDaoRecord";
+import IFieldDef from "./IFieldDef";
+import IRecord from "./IRecord";
 import IDatasource from "./IDatasource";
 import { DaoType } from "./types";
 
 export default abstract class Datasource implements IDatasource {
-    static readonly fieldDefs: Map<DaoType, Array<IDaoFieldDef>> = new Map<DaoType, Array<IDaoFieldDef>>();
-    fieldDefs: Array<IDaoFieldDef> = new Array();
+    static readonly fieldDefs: Map<DaoType, Array<IFieldDef>> = new Map<DaoType, Array<IFieldDef>>();
+    fieldDefs: Array<IFieldDef> = new Array();
 
     protected _objectName: DaoType;
     get objectName(): DaoType {
@@ -15,5 +15,5 @@ export default abstract class Datasource implements IDatasource {
     
     //static getFieldDefs(objectName: DaoType): Array<IDaoFieldDef>;
     abstract load(fields?: Array<string>, filter?: string, maxRows?: number): Promise<Array<Array<any>>>;
-    abstract save(recordsToUpdate: Array<IDaoRecord>, recordsToInsert: Array<IDaoRecord>): Promise<number>;
+    abstract save(recordsToUpdate: Array<IRecord>, recordsToInsert: Array<IRecord>): Promise<number>;
 }

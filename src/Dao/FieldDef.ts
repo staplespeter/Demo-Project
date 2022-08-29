@@ -1,6 +1,6 @@
-import IDaoFieldDef from "./IDaoFieldDef";
+import IFieldDef from "./IFieldDef";
 
-export default class DaoFieldDef implements IDaoFieldDef {
+export default class FieldDef implements IFieldDef {
     readonly name: string;
     readonly isPrimaryKey: boolean;
 

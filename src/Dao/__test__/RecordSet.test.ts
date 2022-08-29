@@ -1,15 +1,15 @@
-import Dao from "../Dao";
-import IDao from "../IDao";
+import Recordset from "../RecordSet";
+import IRecordset from "../IRecordset";
 //import MySqlDatasource from "../MySql/MySqlDatasource";
 //jest.mock("../MySql/MySqlDatasource");
 import { mockMySqlDataSource, mockLoad, mockSave } from "../MySql/__mocks__/MockMySqlDatasource";
 
 
-describe("DAO tests", () => {
-    let userDao: IDao;
+describe("Recordset tests", () => {
+    let userDao: IRecordset;
 
     beforeAll(() => {
-        userDao = new Dao(mockMySqlDataSource);
+        userDao = new Recordset(mockMySqlDataSource);
     });
 
     beforeEach(() => {

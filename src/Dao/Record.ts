@@ -1,37 +1,37 @@
-import DaoField from "./DaoField";
-import IDaoField from "./IDaoField";
-import IDaoFieldDef from "./IDaoFieldDef";
-import IDaoRecord from "./IDaoRecord";
+import Field from "./Field";
+import IField from "./IField";
+import IFieldDef from "./IFieldDef";
+import IRecord from "./IRecord";
 
-export default class DaoRecord implements IDaoRecord {
-    private _fieldDefs: Array<IDaoFieldDef>;
+export default class Record implements IRecord {
+    private _fieldDefs: Array<IFieldDef>;
 
-    readonly primaryKeyField: IDaoField = null;
+    readonly primaryKeyField: IField = null;
     
     get fieldCount(): number {
         return this._fields.length;
     }
 
     get isNew(): boolean {
-        return this._fields.some((field: IDaoField) => field.isNew);
+        return this._fields.some((field: IField) => field.isNew);
     }
 
     get hasChanged(): boolean {
-        return this._fields.some((field: IDaoField) => field.hasChanged);
+        return this._fields.some((field: IField) => field.hasChanged);
     }
 
-    private _fields: Array<IDaoField> = new Array<IDaoField>();
-    getField(name: string): IDaoField {
+    private _fields: Array<IField> = new Array<IField>();
+    getField(name: string): IField {
         return this.getFieldByIndex(this._fieldDefs.findIndex(fd => fd.name == name));
     }
-    getFieldByIndex(x: number): IDaoField {
+    getFieldByIndex(x: number): IField {
         if (x < 0 || x >= this._fields.length) {
             return null;
         }
         return this._fields[x];
     }
 
-    constructor(fieldDefs: Array<IDaoFieldDef>, row: Array<any>, isNew: boolean = false) {
+    constructor(fieldDefs: Array<IFieldDef>, row: Array<any>, isNew: boolean = false) {
         let localRow: Array<any>;
 
         if (!fieldDefs || fieldDefs.length == 0) {
@@ -49,7 +49,7 @@ export default class DaoRecord implements IDaoRecord {
         }
 
         for (let x = 0; x < localRow.length; x++) {
-            let field = new DaoField(fieldDefs[x], localRow[x], isNew);
+            let field = new Field(fieldDefs[x], localRow[x], isNew);
             this._fields.push(field);
             if (fieldDefs[x].isPrimaryKey) {
                 this.primaryKeyField = field;

@@ -1,21 +1,13 @@
 const mysqlx = require('@mysql/xdevapi');
 import { mysqlxConfig } from "../appdata";
-import DaoFieldDef from "../DaoFieldDef";
-import IDaoFieldDef from "../IDaoFieldDef";
-import IDaoRecord from "../IDaoRecord";
-import IDatasource from "../IDatasource";
+import FieldDef from "../FieldDef";
+import Datasource from "../Datasource";
+import IFieldDef from "../IFieldDef";
+import IRecord from "../IRecord";
 import { DaoType } from "../types";
 
-export default class MySqlDatasource implements IDatasource {//extends Datasource {
-    static readonly fieldDefs: Map<DaoType, Array<IDaoFieldDef>> = new Map<DaoType, Array<IDaoFieldDef>>();
-    fieldDefs: Array<IDaoFieldDef> = new Array();
-
-    protected _objectName: DaoType;
-    get objectName(): DaoType {
-        return this._objectName;
-    }
-
-    static async getFieldDefs(objectName: DaoType): Promise<Array<IDaoFieldDef>> {
+export default class MySqlDatasource extends Datasource {
+    static async getFieldDefs(objectName: DaoType): Promise<Array<IFieldDef>> {
         let session: any = null;
 
         try {
@@ -29,9 +21,9 @@ export default class MySqlDatasource implements IDatasource {//extends Datasourc
                 throw new RangeError(`No column definitions for ${mysqlxConfig.schema}.${objectName}`);
             }
             let fields = fieldsRecord.flat();
-            let localFieldDefs = new Array<IDaoFieldDef>();
+            let localFieldDefs = new Array<IFieldDef>();
             for (let field of fields) {
-                localFieldDefs.push(new DaoFieldDef(field[0], field[1] == 'PRI'));
+                localFieldDefs.push(new FieldDef(field[0], field[1] == 'PRI'));
             }
 
             return localFieldDefs;
@@ -48,7 +40,7 @@ export default class MySqlDatasource implements IDatasource {//extends Datasourc
     }
 
     constructor(objectName: DaoType) {
-        //super();
+        super();
         this._objectName = objectName;
     }
 
@@ -102,7 +94,7 @@ export default class MySqlDatasource implements IDatasource {//extends Datasourc
         }
     }
 
-    async save(recordsToUpdate: Array<IDaoRecord>, recordsToInsert: Array<IDaoRecord>): Promise<number> {
+    async save(recordsToUpdate: Array<IRecord>, recordsToInsert: Array<IRecord>): Promise<number> {
         let session: any = null;
         if (!recordsToUpdate) {
             recordsToUpdate = [];

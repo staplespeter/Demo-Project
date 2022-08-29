@@ -1,13 +1,13 @@
-import Dao from "./Dao";
-import IDao from "./IDao";
+import Recordset from "./RecordSet";
+import IRecordset from "./IRecordset";
 import IDaoFactory from "./IDaoFactory";
-import IDaoFieldDef from "./IDaoFieldDef";
 import IDatasource from "./IDatasource";
 import MySqlDatasource from "./MySql/MySqlDatasource";
 import { DaoType, DatasourceType } from "./types";
 
+//todo: tests for DaoFactory
 export default class DaoFactory implements IDaoFactory {
-    static async getDao(sourceType: DatasourceType, objectName: DaoType): Promise<IDao> {
+    static async getDao(sourceType: DatasourceType, objectName: DaoType): Promise<IRecordset> {
         let dataSource: IDatasource = null;
 
         switch (sourceType) {
@@ -21,6 +21,6 @@ export default class DaoFactory implements IDaoFactory {
             default: throw new TypeError('Unknown source type');
         }
 
-        return new Dao(dataSource);
+        return new Recordset(dataSource);
     }
 }

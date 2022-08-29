@@ -1,9 +1,9 @@
-import DaoRecord from "./DaoRecord";
-import IDao from "./IDao";
-import IDaoRecord from "./IDaoRecord";
+import Record from "./Record";
+import IRecordset from "./IRecordset";
+import IRecord from "./IRecord";
 import IDatasource from "./IDatasource";
 
-export default class Dao implements IDao {
+export default class Recordset implements IRecordset {
     private readonly _datasource: IDatasource = null;
 
     readonly objectName: string;
@@ -11,11 +11,11 @@ export default class Dao implements IDao {
         return this._datasource.fieldDefs.length;
     }
 
-    private _records: Array<IDaoRecord> = new Array();
+    private _records: Array<IRecord> = new Array();
     get recordCount(): number {
         return this._records.length;
     }
-    getRecord(x: number): IDaoRecord {
+    getRecord(x: number): IRecord {
         if (x < 0 || x >= this._records.length) {
             return null;
         }
@@ -23,8 +23,8 @@ export default class Dao implements IDao {
     }
 
     private _currentRecordIndex: number = null;
-    private _currentRecord: IDaoRecord = null;
-    get currentRecord(): IDaoRecord {
+    private _currentRecord: IRecord = null;
+    get currentRecord(): IRecord {
         return this._currentRecord;
     }
 
@@ -53,7 +53,7 @@ export default class Dao implements IDao {
         let dataset = await this._datasource.load(fields, filter, maxRows);
         if (dataset) {
             for (let row of dataset) {
-                this._records.push(new DaoRecord(this._datasource.fieldDefs, row));
+                this._records.push(new Record(this._datasource.fieldDefs, row));
             }
         }
         
@@ -84,8 +84,8 @@ export default class Dao implements IDao {
         return discardedCount;
     }
 
-    addRecord(): IDaoRecord;
-    addRecord(values?: Map<string, any>): IDaoRecord {
+    addRecord(): IRecord;
+    addRecord(values?: Map<string, any>): IRecord {
         let row: any = [];
         if (values) {
             for (let fieldDef of this._datasource.fieldDefs) {
@@ -95,12 +95,12 @@ export default class Dao implements IDao {
             }
         }
 
-        let record = new DaoRecord(this._datasource.fieldDefs, row, true);
+        let record = new Record(this._datasource.fieldDefs, row, true);
         this._records.push(record);
         return record;
     }
     
-    prev(): IDaoRecord {
+    prev(): IRecord {
         if (this._currentRecordIndex == null) {
             return null;
         }
@@ -118,7 +118,7 @@ export default class Dao implements IDao {
         return this._currentRecord;
     }
 
-    first(): IDaoRecord {
+    first(): IRecord {
         if (this._currentRecordIndex == null) {
             return null;
         }
@@ -134,7 +134,7 @@ export default class Dao implements IDao {
         return this._currentRecord;
     }
 
-    next(): IDaoRecord {
+    next(): IRecord {
         if (this._currentRecordIndex == null) {
             return null;
         }
@@ -153,7 +153,7 @@ export default class Dao implements IDao {
         return this._currentRecord;
     }
 
-    last(): IDaoRecord {
+    last(): IRecord {
         if (this._currentRecordIndex == null) {
             return null;
         }
