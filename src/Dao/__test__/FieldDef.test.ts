@@ -1,6 +1,6 @@
 import FieldDef from "../FieldDef";
 
-describe('DaoField tests', () => {
+describe('Field tests', () => {
     it('can initialise correctly', () => {
         let fieldDef = new FieldDef('TestDef');
         expect(fieldDef.name).toEqual('TestDef');

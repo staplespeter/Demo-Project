@@ -144,7 +144,7 @@ export default class MySqlDatasource extends Datasource {
             await session.commit();
 
             //todo: move to load fn on super class and have abstract fns for internal load
-            //or move to Dao.save()
+            //or move to Recordset.save()
             for (let record of recordsToUpdate) {
                 for (let x = 0; x < record.fieldCount; x++) {
                     let field = record.getFieldByIndex(x);

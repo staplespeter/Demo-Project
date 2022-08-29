@@ -227,7 +227,7 @@ describe('MySqlData source tests', () => {
 
         let recordsToInsert = new Array<Record>(2);
         //todo: have DAO store the PK field separately so it cannot/does not need to be set.
-        //todo: have the DaoRecord accept a Map instead of an array so do not have to ensure
+        //todo: have the Record accept a Map instead of an array so do not have to ensure
         //order of elements matched the order of field defs.
         let row = [null,
             'test5@test.com',

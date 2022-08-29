@@ -13,7 +13,7 @@ export default abstract class Datasource implements IDatasource {
     }
 
     
-    //static getFieldDefs(objectName: DaoType): Array<IDaoFieldDef>;
+    //static getFieldDefs(objectName: DaoType): Array<IFieldDef>;
     abstract load(fields?: Array<string>, filter?: string, maxRows?: number): Promise<Array<Array<any>>>;
     abstract save(recordsToUpdate: Array<IRecord>, recordsToInsert: Array<IRecord>): Promise<number>;
 }
