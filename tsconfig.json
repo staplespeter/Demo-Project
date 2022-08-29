@@ -2,16 +2,20 @@
   "compilerOptions": {
     "target": "ES2015",
     "module": "commonjs",
+    "esModuleInterop": true,
     "strict": true,
     "strictNullChecks": false,
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "build"
   },
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Recommended"
+  "display": "Recommended",
+  "include": [
+    "src/**/*"
+  ]
 }
