@@ -176,28 +176,27 @@ describe("Recordset tests", () => {
         let count = await userRs.save();
         expect(count).toEqual(2);
         expect(mockSave).toHaveBeenCalledTimes(1);
-        expect(mockSave).toHaveBeenCalledWith([record1, record2], []);
+        expect(mockSave).toHaveBeenCalledWith([record1, record2]);
     });
 
     it("can insert rows in the dataset", async () => {
         await userRs.load();
         let record1 = userRs.addRecord();
-        record1.getField('TestField1').value = 'NewTestField1Value1';
         record1.getField('TestField2').value = 'NewTestField2Value1';
         expect(record1.hasChanged).toEqual(false);
         expect(record1.isNew).toEqual(true);
 
         //todo: have DAO store the PK field separately so it cannot/does not need to be set
         let fieldData = new Map<string, any>();
-        fieldData.set('TestField1', 'NewTestField1Value5');
         fieldData.set('TestField2', 'NewTestField2Value5');
         let record2 = userRs.addRecord(fieldData);
         expect(record2.hasChanged).toEqual(false);
         expect(record2.isNew).toEqual(true);
         
         let count = await userRs.save();
+        expect(count).toEqual(2);
         expect(mockSave).toHaveBeenCalledTimes(1);
-        expect(mockSave).toHaveBeenCalledWith([], [record1, record2]);
+        expect(mockSave).toHaveBeenCalledWith([record1, record2]);
     });
 
 

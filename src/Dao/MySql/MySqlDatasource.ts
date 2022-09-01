@@ -122,9 +122,13 @@ export default class MySqlDatasource extends Datasource {
             return 0;
         }
 
+        if (records.some(r => r.primaryKeyField === undefined)) {
+            throw new ReferenceError('Primary key field is not defined.  Unable to save records');
+        }
+
         //todo: handling of non-autoincremnting PK fields
-        const recordsToUpdate = records.filter(r => r.primaryKeyField.value == true);
-        const recordsToInsert = records.filter(r => r.primaryKeyField.value == false);
+        const recordsToUpdate = records.filter(r => r.primaryKeyField.value !== null);
+        const recordsToInsert = records.filter(r => r.primaryKeyField.value === null);
         if (recordsToUpdate.length + recordsToInsert.length == 0) {
             return;
         }
@@ -135,10 +139,6 @@ export default class MySqlDatasource extends Datasource {
             await session.startTransaction();
 
             for (let record of recordsToUpdate) {
-                if (!record.primaryKeyField) {
-                    throw new ReferenceError('Primary key field is not defined.  Unable to update record');
-                }
-
                 let query = table.update()
                     .where(`${record.primaryKeyField.fieldDef.name} = ${record.primaryKeyField.value}`);
                 for (let x = 0; x < record.fieldCount; x++) {
@@ -173,9 +173,6 @@ export default class MySqlDatasource extends Datasource {
                 if (recordsToInsert[x].primaryKeyField) {
                     recordsToInsert[x].primaryKeyField.value = insertIds[x];
                 }
-                for (let y = 0; y < recordsToInsert[x].fieldCount; y++) {
-                    recordsToInsert[x].getFieldByIndex(y).save();
-                }
             }
 
             for (let record of records) {
@@ -187,7 +184,7 @@ export default class MySqlDatasource extends Datasource {
                 }
             }
 
-            return recordsToUpdate.length + recordsToInsert.length;
+            return records.length;
         }
         catch (e) {
             if (session) {

@@ -35,9 +35,13 @@ export default class Record implements IRecord {
         if (!fieldDefs || fieldDefs.length == 0) {
             throw new RangeError('No field definitions');
         }
+
+        if (!values) {
+            values = new Map<string, any>();
+        }
         
         for (let fieldDef of fieldDefs) {
-            let field = new Field(fieldDef, values.get(fieldDef.name), isNew);
+            let field = new Field(fieldDef, values.get(fieldDef.name) ?? null, isNew);
             this._fields.push(field);
             if (fieldDef.isPrimaryKey) {
                 this.primaryKeyField = field;

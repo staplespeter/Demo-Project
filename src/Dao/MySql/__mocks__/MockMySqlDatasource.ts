@@ -1,6 +1,7 @@
 import FieldDef from "../../FieldDef";
 import IFieldDef from "../../IFieldDef";
 import IRecord from "../../IRecord";
+import Record from "../../Record";
 import MySqlDatasource from "../MySqlDatasource";
 jest.mock("../MySqlDatasource");
 
@@ -22,15 +23,12 @@ MySqlDatasource.fieldDefs.set('User', mockFieldDefs);
 
 
 const mockLoadResult = [
-    ['TestField1Value1', 'TestField2Value1'],
-    ['TestField1Value2', 'TestField2Value2'],
-    ['TestField1Value3', 'TestField2Value3'],
-    ['TestField1Value4', 'TestField2Value4']
+    new Record(mockFieldDefs, new Map<string, any>().set('TestField1', 'TestField1Value1').set('TestField2', 'TestField2Value1')),
+    new Record(mockFieldDefs, new Map<string, any>().set('TestField1', 'TestField1Value2').set('TestField2', 'TestField2Value2')),
+    new Record(mockFieldDefs, new Map<string, any>().set('TestField1', 'TestField1Value3').set('TestField2', 'TestField2Value3')),
+    new Record(mockFieldDefs, new Map<string, any>().set('TestField1', 'TestField1Value4').set('TestField2', 'TestField2Value4'))
 ];
 const mockLoadFn = async function (fields: Array<string> = null, filter: string = null, maxRows: number = 100) {
-    if (maxRows == 0) {
-        return null;
-    }
     if (maxRows < mockLoadResult.length) {
         return mockLoadResult.slice(0, maxRows);
     }
@@ -42,13 +40,13 @@ export const mockLoad = jest
         return mockLoadFn(fields, filter, maxRows);
     });
 
-const mockSaveFn = async function (recordsToUpdate: Array<IRecord>, recordsToInsert: Array<IRecord>) {
-    return recordsToUpdate.length + recordsToInsert.length;
+const mockSaveFn = async function (records: Array<IRecord>) {
+    return records.length;
 };
 export const mockSave = jest
     .spyOn(MySqlDatasource.prototype, 'save')
-    .mockImplementation((recordsToUpdate: Array<IRecord>, recordsToInsert: Array<IRecord>) => {
-        return mockSaveFn(recordsToUpdate, recordsToInsert);
+    .mockImplementation((records: Array<IRecord>) => {
+        return mockSaveFn(records);
     });
 
 export const mockMySqlDataSource = new MySqlDatasource('User');
