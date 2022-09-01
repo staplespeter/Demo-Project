@@ -7,7 +7,7 @@ import { DaoType, DatasourceType } from "./types";
 
 //todo: tests for DaoFactory
 export default class DaoFactory implements IDaoFactory {
-    static async getDao(sourceType: DatasourceType, objectName: DaoType): Promise<IRecordset> {
+    static async getDataSource(sourceType: DatasourceType, objectName: DaoType): Promise<IDatasource> {
         let dataSource: IDatasource = null;
 
         switch (sourceType) {
@@ -21,6 +21,10 @@ export default class DaoFactory implements IDaoFactory {
             default: throw new TypeError('Unknown source type');
         }
 
-        return new Recordset(dataSource);
+        return dataSource;
+    }
+
+    static async getRecordSet(sourceType: DatasourceType, objectName: DaoType): Promise<IRecordset> {
+        return new Recordset(await DaoFactory.getDataSource(sourceType, objectName));
     }
 }

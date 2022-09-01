@@ -50,12 +50,7 @@ export default class Recordset implements IRecordset {
         this._bof = false;
         this._eof = false;
 
-        let dataset = await this._datasource.load(fields, filter, maxRows);
-        if (dataset) {
-            for (let row of dataset) {
-                this._records.push(new Record(this._datasource.fieldDefs, row));
-            }
-        }
+        this._records = await this._datasource.load(fields, filter, maxRows);
         
         if (this._records.length > 0) {
             this._currentRecordIndex = 0;
@@ -68,9 +63,8 @@ export default class Recordset implements IRecordset {
     }
 
     async save(): Promise<number> {
-        let recordsToUpdate = this._records.filter(r => r.hasChanged);
-        let recordsToInsert = this._records.filter(r => r.isNew);
-        return this._datasource.save(recordsToUpdate, recordsToInsert);
+        let records = this._records.filter(r => r.hasChanged || r.isNew);
+        return this._datasource.save(records);
     }
 
     discard(): number {
@@ -86,16 +80,10 @@ export default class Recordset implements IRecordset {
 
     addRecord(): IRecord;
     addRecord(values?: Map<string, any>): IRecord {
-        let row: any = [];
-        if (values) {
-            for (let fieldDef of this._datasource.fieldDefs) {
-                if (values.has(fieldDef.name)) {
-                    row.push(values.get(fieldDef.name));
-                }
-            }
+        if (!values) {
+            values = new Map<string, any>();
         }
-
-        let record = new Record(this._datasource.fieldDefs, row, true);
+        let record = new Record(this._datasource.fieldDefs, values, true);
         this._records.push(record);
         return record;
     }

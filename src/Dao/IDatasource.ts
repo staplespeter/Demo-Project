@@ -11,6 +11,6 @@ export default interface IDatasource {
     fieldDefs: Array<IFieldDef>;
 
     //static getFieldDefs(objectName: DaoType): Array<IFieldDef>;
-    load(fields?: Array<string>, filter?: string, maxRows?: number): Promise<Array<Array<any>>>;
-    save(recordsToUpdate: Array<IRecord>, recordsToInsert: Array<IRecord>): Promise<number>;
+    load(fields?: Array<string>, filter?: string, maxRows?: number): Promise<Array<IRecord>>;
+    save(records: Array<IRecord>): Promise<number>;
 }

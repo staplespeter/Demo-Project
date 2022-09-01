@@ -4,5 +4,6 @@ import IFieldDef from "./IFieldDef";
 
 export default interface IDaoFactory {
     //TypeScript won't allow static members on an interface.  Pointless.
-    //static getDao(sourceType: DatasourceType, objectName: DaoType): Promise<IRecordset>;
+    //static getDatasource(sourceType: DatasourceType, objectName: DaoType): Promise<IDatasource>;
+    //static getRecordSet(sourceType: DatasourceType, objectName: DaoType): Promise<IRecordset>;
 }

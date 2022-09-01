@@ -5,6 +5,7 @@ import Datasource from "../Datasource";
 import IFieldDef from "../IFieldDef";
 import IRecord from "../IRecord";
 import { DaoType } from "../types";
+import Record from "../Record";
 
 export default class MySqlDatasource extends Datasource {
     static async getFieldDefs(objectName: DaoType): Promise<Array<IFieldDef>> {
@@ -42,9 +43,13 @@ export default class MySqlDatasource extends Datasource {
     constructor(objectName: DaoType) {
         super();
         this._objectName = objectName;
+        this.fieldDefs = MySqlDatasource.fieldDefs.get(objectName as DaoType);
+        if (!this.fieldDefs) {
+            throw new ReferenceError(`Field definitions for object ${this._objectName} not found`);
+        }
     }
 
-    async load(fields: Array<string> = null, filter: string = null, maxRows: number = 100): Promise<Array<Array<any>>> {
+    async load(fields: Array<string> = null, filter: string = null, maxRows: number = 100): Promise<Array<IRecord>> {
         if (!fields || fields.length == 0) {
             fields = null;
         }
@@ -52,33 +57,50 @@ export default class MySqlDatasource extends Datasource {
             filter = null;
         }
         
-        this.fieldDefs = new Array();
+        const sourceFieldDefs = MySqlDatasource.fieldDefs.get(this._objectName as DaoType);
+        if (!sourceFieldDefs) {
+            throw new ReferenceError(`Field definitions for object ${this._objectName} not found`);
+        }
+        const fieldNames = fields ? fields : ((fds: IFieldDef[]) => { 
+            const fns: string[] = [];
+            fds.forEach(fd => fns.push(fd.name));
+            return fns;
+        })(sourceFieldDefs);
 
         let session: any = null;
         try {
+            this.fieldDefs = new Array();
+
             session = await mysqlx.getSession(mysqlxConfig);
             let query = session.getDefaultSchema().getTable(this._objectName);
-            query = fields ? query.select(fields) : query.select();
+            query = query.select(fieldNames);
             query = filter ? query.where(filter) : query;
             query = query.limit(maxRows);
             let result = await query.execute();
 
             let columns = result.getColumns();
-            let fieldDefs = MySqlDatasource.fieldDefs.get(this._objectName as DaoType);
-            if (!fieldDefs) {
-                throw new ReferenceError(`Field definitions for object ${this._objectName} not found`);
-            }
             for (let column of columns) {
-                let fieldDef = fieldDefs.find(fd => fd.name == column.getColumnName());
+                let fieldDef = sourceFieldDefs.find(fd => fd.name == column.getColumnName());
                 if (!fieldDef) {
                     throw new ReferenceError(`Field definition for field ${column.getColumnName()} not found`);
                 }
                 this.fieldDefs.push(fieldDef);
             }
 
-            return result.fetchAll();
+            let records: IRecord[] = [];
+            const dataset: Array<Array<any>> = result.fetchAll();
+            dataset.forEach(row => {
+                const values = new Map<string, any>();
+                fieldNames.forEach((fn, x) => {
+                    values.set(fn, row[x]);
+                });
+                records.push(new Record(this.fieldDefs, values));
+            });
+
+            return records;
         }
         catch (e) {
+            this.fieldDefs = sourceFieldDefs;
             console.log(e);
             throw e;
         }
@@ -94,13 +116,17 @@ export default class MySqlDatasource extends Datasource {
         }
     }
 
-    async save(recordsToUpdate: Array<IRecord>, recordsToInsert: Array<IRecord>): Promise<number> {
+    async save(records: Array<IRecord>): Promise<number> {
         let session: any = null;
-        if (!recordsToUpdate) {
-            recordsToUpdate = [];
+        if (!records || records.length == 0) {
+            return 0;
         }
-        if (!recordsToInsert) {
-            recordsToInsert = [];
+
+        //todo: handling of non-autoincremnting PK fields
+        const recordsToUpdate = records.filter(r => r.primaryKeyField.value == true);
+        const recordsToInsert = records.filter(r => r.primaryKeyField.value == false);
+        if (recordsToUpdate.length + recordsToInsert.length == 0) {
+            return;
         }
 
         try {
@@ -143,23 +169,21 @@ export default class MySqlDatasource extends Datasource {
 
             await session.commit();
 
-            //todo: move to load fn on super class and have abstract fns for internal load
-            //or move to Recordset.save()
-            for (let record of recordsToUpdate) {
-                for (let x = 0; x < record.fieldCount; x++) {
-                    let field = record.getFieldByIndex(x);
-                    if (field.hasChanged) {
-                        field.save();
-                    }
-                }
-            }
-
             for (let x = 0; x < recordsToInsert.length; x++) {
                 if (recordsToInsert[x].primaryKeyField) {
                     recordsToInsert[x].primaryKeyField.value = insertIds[x];
                 }
                 for (let y = 0; y < recordsToInsert[x].fieldCount; y++) {
                     recordsToInsert[x].getFieldByIndex(y).save();
+                }
+            }
+
+            for (let record of records) {
+                for (let x = 0; x < record.fieldCount; x++) {
+                    let field = record.getFieldByIndex(x);
+                    if (field.isNew || field.hasChanged) {
+                        field.save();
+                    }
                 }
             }
 

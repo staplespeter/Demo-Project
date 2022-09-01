@@ -24,7 +24,7 @@ export default class Field implements IField {
         return this._value
     }
     set value(v: any) {
-        if (!this._isNew && !this._hasChanged && !this.fieldDef.isPrimaryKey) {
+        if (!this._isNew && !this._hasChanged && !this.fieldDef.isPrimaryKey && v != this.value) {
             this._oldValue = this._value;
             this._hasChanged = true;
         }

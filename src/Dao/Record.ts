@@ -31,27 +31,15 @@ export default class Record implements IRecord {
         return this._fields[x];
     }
 
-    constructor(fieldDefs: Array<IFieldDef>, row: Array<any>, isNew: boolean = false) {
-        let localRow: Array<any>;
-
+    constructor(fieldDefs: Array<IFieldDef>, values: Map<string, any>, isNew: boolean = false) {
         if (!fieldDefs || fieldDefs.length == 0) {
             throw new RangeError('No field definitions');
         }
-        else if (isNew && (!row || row.length == 0)) {
-            localRow = new Array<any>(fieldDefs.length);
-            localRow.fill(null);
-        }
-        else if (!row || row.length != fieldDefs.length) {
-            throw new RangeError('Argument mismatch.  Number of columns in row does not match the number of field definitions');
-        }
-        else {
-            localRow = row;
-        }
-
-        for (let x = 0; x < localRow.length; x++) {
-            let field = new Field(fieldDefs[x], localRow[x], isNew);
+        
+        for (let fieldDef of fieldDefs) {
+            let field = new Field(fieldDef, values.get(fieldDef.name), isNew);
             this._fields.push(field);
-            if (fieldDefs[x].isPrimaryKey) {
+            if (fieldDef.isPrimaryKey) {
                 this.primaryKeyField = field;
             }
         }
@@ -62,7 +50,7 @@ export default class Record implements IRecord {
     //todo: record specific load and save
     // load(): void {}
 
-    // async save(table: any): Promise<void> {}
+    // async save(: any): Promise<void> {}
 
     discard(): number {
         let changedFields = this._fields.filter(f => f.hasChanged);
