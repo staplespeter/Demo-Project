@@ -49,5 +49,5 @@ export const mockSave = jest
         return mockSaveFn(records);
     });
 
-export const mockMySqlDataSource = new MySqlDatasource('User');
-mockMySqlDataSource.fieldDefs = mockFieldDefs;
+export const mockMySqlDataSourceUser = new MySqlDatasource('User');
+mockMySqlDataSourceUser.fieldDefs = mockFieldDefs;

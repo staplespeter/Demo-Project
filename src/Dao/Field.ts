@@ -14,7 +14,7 @@ export default class Field implements IField {
         return this._hasChanged;
     }
 
-    private _oldValue: any = undefined;
+    private _oldValue: any = null;
     get oldValue(): any {
         return this._oldValue;
     }
@@ -33,7 +33,7 @@ export default class Field implements IField {
             this._value = v;
 
             if (v == this._oldValue) {
-                this._oldValue = undefined;
+                this._oldValue = null;
                 this._hasChanged = false;
             }
         }
@@ -49,7 +49,7 @@ export default class Field implements IField {
     discard(): void {
         if (!this._isNew) {
             this._value = this._oldValue;
-            this._oldValue = undefined;
+            this._oldValue = null;
             this._hasChanged = false;
         }
     }
@@ -59,7 +59,7 @@ export default class Field implements IField {
             this._isNew = false;
         }
         else {
-            this._oldValue = undefined;
+            this._oldValue = null;
             this._hasChanged = false;
         }
     }

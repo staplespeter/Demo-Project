@@ -19,10 +19,11 @@ export default class UserSession extends DataObject {
         return us;
     }
 
-    id: number;
-    startDate: Date;
-    endDate: Date;
-    userId: number;
+    //properties should not be set directly
+    id: number = null;
+    startDate: Date = null;
+    endDate: Date = null;
+    userId: number = null;
 
     constructor(dao: UserSessionDao) {
         super();
@@ -30,25 +31,29 @@ export default class UserSession extends DataObject {
     }
 
     async startSession(userId: number): Promise<void>;
+    async startSession(userId: number, startDate: Date): Promise<void>;
     async startSession(userId: number, startDate?: Date) {
         if (!startDate) {
             startDate = new Date();
         }
 
-        this.userId = userId;
-        this.startDate = startDate;
-        return this._dao.save(this);
+        if (!this.startDate) {
+            this.userId = userId;
+            this.startDate = startDate;
+            await this._dao.save(this);
+        }
     }
 
     async endSession(): Promise<void>;
+    async endSession(endDate: Date): Promise<void>;
     async endSession(endDate?: Date) {
         if (!endDate) {
             endDate = new Date();
         }
 
-        if (this.id && !this.endDate) {
+        if (this.id && this.startDate && !this.endDate) {
             this.endDate = endDate;
-            return this._dao.save(this);
+            await this._dao.save(this);
         }
     }
 }

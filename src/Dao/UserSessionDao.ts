@@ -2,9 +2,16 @@ import UserSession from "../Model/UserSession";
 import DaoFactory from "./DaoFactory";
 import IDao from "./IDao";
 import IRecordset from "./IRecordset";
+import Recordset from "./RecordSet";
 
 export default class UserSessionDao implements IDao<UserSession> {
     private _rs: IRecordset = null;
+
+    constructor();
+    constructor(rs: Recordset);
+    constructor(rs?: Recordset) {
+        this._rs = rs;
+    }
 
     async load(id: number): Promise<UserSession> {
         if (!this._rs) {
@@ -18,11 +25,15 @@ export default class UserSessionDao implements IDao<UserSession> {
         else if (this._rs.recordCount > 1) {
             throw new Error(`More than one user session with Id ${id} found`);
         }
-        else if (this._rs.recordCount== 1) {
+        else if (this._rs.recordCount == 1) {
             const us = new UserSession(this);
             us.id = this._rs.currentRecord.getField('Id').value;
-            us.startDate = new Date(this._rs.currentRecord.getField('StartDate').value);
-            us.endDate = new Date(this._rs.currentRecord.getField('EndDate').value);
+            us.startDate = this._rs.currentRecord.getField('StartDate').value ?
+                new Date(this._rs.currentRecord.getField('StartDate').value) :
+                null;
+            us.endDate = this._rs.currentRecord.getField('EndDate').value?
+                new Date(this._rs.currentRecord.getField('EndDate').value) :
+                null;
             us.userId = this._rs.currentRecord.getField('UserId').value;
             return us;
         }
@@ -32,11 +43,19 @@ export default class UserSessionDao implements IDao<UserSession> {
         if (!this._rs) {
             this._rs = await DaoFactory.getRecordSet('MySQL', 'UserSession');
         }
-        let dataMap = new Map();
-        dataMap.set('UserId', o.userId);
-        dataMap.set('StartDate', o.startDate.toISOString());
-        this._rs.addRecord(dataMap);
-        if (await this._rs.save() > 0) {
+        if (this._rs.recordCount == 0) {
+            this._rs.addRecord();
+        }
+        this._rs.currentRecord.getField('Id').value = o.id;
+        this._rs.currentRecord.getField('StartDate').value = o.startDate?.toISOString() ?? null;
+        this._rs.currentRecord.getField('EndDate').value = o.endDate?.toISOString() ?? null;
+        this._rs.currentRecord.getField('UserId').value = o.userId;
+        
+        const savedCount = await this._rs.save();
+        if (savedCount == 0) {
+            throw new Error('Unable to save record');
+        }
+        else if (savedCount > 0) {
             o.id = this._rs.currentRecord.getField('Id').value;
         }
     }

@@ -10,7 +10,7 @@ describe("Field tests", () => {
         expect(field.fieldDef).toEqual(fieldDef);
         expect(field.isNew).toEqual(false);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeUndefined();
+        expect(field.oldValue).toBeNull();
         expect(field.value).toEqual('TestValue');
     });
 
@@ -34,7 +34,7 @@ describe("Field tests", () => {
         field.value = 'NewTestValue';
         expect(field.isNew).toEqual(false);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeUndefined();
+        expect(field.oldValue).toBeNull();
         expect(field.value).toEqual('TestValue');
     });
 
@@ -44,14 +44,14 @@ describe("Field tests", () => {
         field.discard();
         expect(field.isNew).toEqual(false);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeUndefined();
+        expect(field.oldValue).toBeNull();
         expect(field.value).toEqual('TestValue');
 
         field.value = 'NewTestValue';
         field.value = 'TestValue';
         expect(field.isNew).toEqual(false);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeUndefined();
+        expect(field.oldValue).toBeNull();
         expect(field.value).toEqual('TestValue');
     });
 
@@ -61,7 +61,7 @@ describe("Field tests", () => {
         field.save();
         expect(field.isNew).toEqual(false);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeUndefined();
+        expect(field.oldValue).toBeNull();
         expect(field.value).toEqual('NewTestValue');
     });
 
@@ -70,7 +70,7 @@ describe("Field tests", () => {
         expect(field.fieldDef).toEqual(fieldDef);
         expect(field.isNew).toEqual(true);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeUndefined();
+        expect(field.oldValue).toBeNull();
         expect(field.value).toEqual('TestValue');
     });
 
@@ -79,13 +79,13 @@ describe("Field tests", () => {
         field.value = 'NewTestValue';
         expect(field.isNew).toEqual(true);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeUndefined();
+        expect(field.oldValue).toBeNull();
         expect(field.value).toEqual('NewTestValue');
 
         field.value = 'NewTestValue2';
         expect(field.isNew).toEqual(true);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeUndefined();
+        expect(field.oldValue).toBeNull();
         expect(field.value).toEqual('NewTestValue2');
     });
 
@@ -95,7 +95,7 @@ describe("Field tests", () => {
         field.value = 'NewTestValue';
         expect(field.isNew).toEqual(true);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeUndefined();
+        expect(field.oldValue).toBeNull();
         expect(field.value).toEqual('NewTestValue');
     });
 
@@ -105,7 +105,7 @@ describe("Field tests", () => {
         field.discard();
         expect(field.isNew).toEqual(true);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeUndefined();
+        expect(field.oldValue).toBeNull();
         expect(field.value).toEqual('NewTestValue');
     });
 
@@ -115,7 +115,7 @@ describe("Field tests", () => {
         field.save();
         expect(field.isNew).toEqual(false);
         expect(field.hasChanged).toEqual(false);
-        expect(field.oldValue).toBeUndefined();
+        expect(field.oldValue).toBeNull();
         expect(field.value).toEqual('NewTestValue');
     });
 });

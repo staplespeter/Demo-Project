@@ -2,14 +2,14 @@ import Recordset from "../RecordSet";
 import IRecordset from "../IRecordset";
 //import MySqlDatasource from "../MySql/MySqlDatasource";
 //jest.mock("../MySql/MySqlDatasource");
-import { mockMySqlDataSource, mockLoad, mockSave } from "../MySql/__mocks__/MockMySqlDatasource";
+import { mockMySqlDataSourceUser, mockLoad, mockSave } from "../MySql/__mocks__/MockMySqlDatasourceUser";
 
 
 describe("Recordset tests", () => {
     let userRs: IRecordset;
 
     beforeAll(() => {
-        userRs = new Recordset(mockMySqlDataSource);
+        userRs = new Recordset(mockMySqlDataSourceUser);
     });
 
     beforeEach(() => {
@@ -20,7 +20,7 @@ describe("Recordset tests", () => {
     it("can load a dataset and navigate", async () => {
         let count = await userRs.load();
         expect(mockLoad).toBeCalledTimes(1);
-        expect(mockLoad).toBeCalledWith(undefined, undefined, undefined);
+        expect(mockLoad).toBeCalledWith(null, null, null);
         expect(userRs.fieldCount).toEqual(2);
         expect(count).toEqual(4);
         expect(userRs.recordCount).toEqual(4);
@@ -183,6 +183,7 @@ describe("Recordset tests", () => {
         await userRs.load();
         let record1 = userRs.addRecord();
         record1.getField('TestField2').value = 'NewTestField2Value1';
+        expect(userRs.currentRecord).toEqual(record1);
         expect(record1.hasChanged).toEqual(false);
         expect(record1.isNew).toEqual(true);
 
@@ -190,6 +191,7 @@ describe("Recordset tests", () => {
         let fieldData = new Map<string, any>();
         fieldData.set('TestField2', 'NewTestField2Value5');
         let record2 = userRs.addRecord(fieldData);
+        expect(userRs.currentRecord).toEqual(record2);
         expect(record2.hasChanged).toEqual(false);
         expect(record2.isNew).toEqual(true);
         

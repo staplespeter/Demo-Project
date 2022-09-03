@@ -85,6 +85,7 @@ export default class Recordset implements IRecordset {
         }
         let record = new Record(this._datasource.fieldDefs, values, true);
         this._records.push(record);
+        this._currentRecord = record;
         return record;
     }
     
