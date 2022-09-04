@@ -4,10 +4,15 @@ import Recordset from "../RecordSet";
 import UserSessionDao from "../UserSessionDao";
 
 describe('UserSessionDao tests', () => {
-    it('can load an existing session', async () => {
+    afterEach(() => {
+        mockLoad.mockClear();
+        mockSave.mockClear();
+    })
+
+    it('can load an existing session for a user', async () => {
         const rs = new Recordset(mockMySqlDataSourceUserSession);
         const dao = new UserSessionDao(rs);
-        const us = await dao.load(1);
+        const us = await dao.load(101);
         expect(mockLoad).toBeCalledTimes(1);
         expect(us.id).toEqual(1);
         expect(us.startDate).toEqual(new Date('2001-01-01 12:34:56'));
@@ -15,18 +20,19 @@ describe('UserSessionDao tests', () => {
         expect(us.userId).toEqual(101);
     });
 
-    it('can throw an exception when an session is not found', async () => {
+    it('will return null when no existing user session is found', async () => {
         const rs = new Recordset(mockMySqlDataSourceUserSession);
         const dao = new UserSessionDao(rs);
-        const f = async (): Promise<void> => { await dao.load(2) };
-        expect(await f).rejects.toThrow('No user session with Id 2 found');
+        const us = await dao.load(102);
+        expect(mockLoad).toBeCalledTimes(1);
+        expect(us).toBeNull();
     });
 
-    it('can throw an exception when multiple sessions are found', async () => {
+    it('will throw an exception when multiple sessions are found', async () => {
         const rs = new Recordset(mockMySqlDataSourceUserSession);
         const dao = new UserSessionDao(rs);
-        const f = async (): Promise<void> => { await dao.load(3) };
-        expect(await f).rejects.toThrow('More than one user session with Id 3 found');
+        const f = async (): Promise<UserSession> => { return dao.load(103) };
+        expect(await f).rejects.toThrow('More than one session for user ID 103 found');
     });
 
     it('can save a new session', async () => {
@@ -57,7 +63,7 @@ describe('UserSessionDao tests', () => {
         expect(us.id).toEqual(4);
     });
 
-    it('can throw an exception when no records are saved', async () => {
+    it('can throw an exception when a session is not saved', async () => {
         const us = new UserSession(null);
         us.id = 5;
         us.startDate = new Date('2001-01-05 12:34:56');
@@ -65,8 +71,8 @@ describe('UserSessionDao tests', () => {
         us.userId = 105;
         const rs = new Recordset(mockMySqlDataSourceUserSession);
         const dao = new UserSessionDao(rs);
-        const f = async (): Promise<void> => { await dao.save(us) };
-        expect(await f).rejects.toThrow('Unable to save record');
+        const f = async (): Promise<void> => { dao.save(us) };
+        expect(await f).rejects.toThrow('Unable to save session');
         expect(mockSave).toBeCalledTimes(1);
         expect(mockSave).toBeCalledWith([rs.currentRecord]);
     });

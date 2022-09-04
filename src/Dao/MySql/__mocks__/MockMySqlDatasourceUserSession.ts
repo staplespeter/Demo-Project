@@ -46,9 +46,9 @@ const mockLoadResult = [
 ];
 const mockLoadFn = async function (fields: Array<string> = null, filter: string = null, maxRows: number = 100) {
     const flds= fields;
-    const id = filter.substring("WHERE 'Id' = ".length);
+    const userId = filter.substring("WHERE 'UserId' = ".length, filter.length - " AND 'EndDate IS NULL".length);
 
-    return mockLoadResult.filter(r => r.getField('Id').value == id);
+    return mockLoadResult.filter(r => r.getField('UserId').value == userId);
 }
 export const mockLoad = jest
     .spyOn(MySqlDatasource.prototype, 'load')

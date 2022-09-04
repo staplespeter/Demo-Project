@@ -1,4 +1,3 @@
-import IDao from "../Dao/IDao";
 import UserDao from "../Dao/UserDao";
 import DataObject from "./DataObject";
 import Password from "./Password";
@@ -18,6 +17,17 @@ export default class User extends DataObject {
         return dao.load(email);
     }
 
+    static async register(email: string, password: string): Promise<User> {
+        const dao = new UserDao();
+        const u = new User(dao);
+        u.email = email;
+        await u.setPassword(password);
+        if (!await u.save()) {
+            throw new Error('Unable to save new user');
+        }
+        return u;
+    }
+
     constructor(dao: UserDao) {
         //todo: validate email before querying
         super();
@@ -26,7 +36,17 @@ export default class User extends DataObject {
 
     async setPassword(password?: string) {
         const pwdObj = new Password(password);
+        await pwdObj.generate();
         this.passwordHash = pwdObj.hash;
         this.passwordSalt = pwdObj.salt;
+    }
+
+    async save(): Promise<boolean> {
+        if (!this.email || !this.passwordHash || ! this.passwordSalt) {
+            return false;
+        }
+
+        await this._dao.save(this);
+        return true;
     }
 }

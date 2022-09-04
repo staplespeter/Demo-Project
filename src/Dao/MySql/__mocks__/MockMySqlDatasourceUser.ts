@@ -13,8 +13,11 @@ export const mockGetObjectName = jest
 
 //todo: mock these field defs?
 const mockFieldDefs: Array<IFieldDef> = [
-    new FieldDef('TestField1', true),
-    new FieldDef('TestField2')
+    new FieldDef('Id', true),
+    new FieldDef('Email'),
+    new FieldDef('PasswordHash'),
+    new FieldDef('PasswordSalt'),
+    new FieldDef('DateRegistered')
 ];
 export const mockGetFieldDefs = jest
     .spyOn(MySqlDatasource, 'getFieldDefs')
@@ -23,16 +26,33 @@ MySqlDatasource.fieldDefs.set('User', mockFieldDefs);
 
 
 const mockLoadResult = [
-    new Record(mockFieldDefs, new Map<string, any>().set('TestField1', 'TestField1Value1').set('TestField2', 'TestField2Value1')),
-    new Record(mockFieldDefs, new Map<string, any>().set('TestField1', 'TestField1Value2').set('TestField2', 'TestField2Value2')),
-    new Record(mockFieldDefs, new Map<string, any>().set('TestField1', 'TestField1Value3').set('TestField2', 'TestField2Value3')),
-    new Record(mockFieldDefs, new Map<string, any>().set('TestField1', 'TestField1Value4').set('TestField2', 'TestField2Value4'))
+    new Record(mockFieldDefs,
+        new Map<string, any>()
+            .set('Id', 1)
+            .set('Email', 'test@test1.com')
+            .set('PasswordHash', 'testpasswordhash1')
+            .set('PasswordSalt', 'testpasswordsalt1')
+            .set('DateRegistered', '2001-01-01 12:34:56')),
+    new Record(mockFieldDefs,
+        new Map<string, any>()
+            .set('Id', 3)
+            .set('Email', 'test@test3.com')
+            .set('PasswordHash', 'testpasswordhash3')
+            .set('PasswordSalt', 'testpasswordsalt3')
+            .set('DateRegistered', '2001-01-03 12:34:56')),
+    new Record(mockFieldDefs,
+        new Map<string, any>()
+            .set('Id', 3)
+            .set('Email', 'test@test3.com')
+            .set('PasswordHash', 'testpasswordhash3')
+            .set('PasswordSalt', 'testpasswordsalt3')
+            .set('DateRegistered', '2001-01-03 12:34:56'))
 ];
 const mockLoadFn = async function (fields: Array<string> = null, filter: string = null, maxRows: number = 100) {
-    if (maxRows < mockLoadResult.length) {
-        return mockLoadResult.slice(0, maxRows);
-    }
-    return mockLoadResult;
+    const flds= fields;
+    const email = filter.substring("WHERE 'Email' = ".length);
+
+    return mockLoadResult.filter(r => r.getField('Email').value == email);
 }
 export const mockLoad = jest
     .spyOn(MySqlDatasource.prototype, 'load')
@@ -41,6 +61,13 @@ export const mockLoad = jest
     });
 
 const mockSaveFn = async function (records: Array<IRecord>) {
+    if (records[0].getField('Email').value == 'test@test4.com') {
+        records[0].primaryKeyField.value = 4;
+    }
+
+    if (records[0].primaryKeyField.value == 5) {
+        return 0;
+    }
     return records.length;
 };
 export const mockSave = jest

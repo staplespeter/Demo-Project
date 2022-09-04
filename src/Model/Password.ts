@@ -20,6 +20,7 @@ export default class Password {
     
     constructor();
     constructor(text: string);
+    constructor(hash: string, salt: string);
     constructor(hash?: string, salt?: string) {
         if (hash && salt) {
             this._hash = hash;
@@ -33,7 +34,7 @@ export default class Password {
                 length: Password.GENERATED_PWD_LENGTH,
                 characters: [
                     { characters: secureRandomPassword.lower, exactly: 6 },
-                    { characters: secureRandomPassword.lower, exactly: 6 },
+                    { characters: secureRandomPassword.upper, exactly: 6 },
                     { characters: secureRandomPassword.digits, exactly: 2 },
                     { characters: secureRandomPassword.symbols, exactly: 2 },
                 ]

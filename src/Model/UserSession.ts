@@ -18,8 +18,7 @@ export default class UserSession extends DataObject {
         await us.startSession(userId, startDate);
         return us;
     }
-
-    //properties should not be set directly
+    
     id: number = null;
     startDate: Date = null;
     endDate: Date = null;
