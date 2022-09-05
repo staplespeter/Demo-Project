@@ -16,6 +16,10 @@ describe('User tests', () => {
         expect(u.passwordSalt.length).toEqual(44);
     });
 
+    it('can authenticate a user', async () => {
+        throw new Error('test not implemented');
+    });
+
     it('can save a user', async () => {
         const dao = new UserDao(null);
         const u = new User(dao);

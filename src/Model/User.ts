@@ -23,6 +23,7 @@ export default class User extends DataObject {
         u.email = email;
         await u.setPassword(password);
         if (!await u.save()) {
+            console.log()
             throw new Error('Unable to save new user');
         }
         return u;
@@ -39,6 +40,15 @@ export default class User extends DataObject {
         await pwdObj.generate();
         this.passwordHash = pwdObj.hash;
         this.passwordSalt = pwdObj.salt;
+    }
+
+    async authenticate(password: string): Promise<boolean> {
+        if (!this.passwordHash || !this.passwordSalt) {
+            return false;
+        }
+
+        const pwd = new Password(this.passwordHash, this.passwordSalt);
+        return pwd.verify(password);
     }
 
     async save(): Promise<boolean> {

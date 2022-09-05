@@ -1,10 +1,11 @@
 import DataObject from './DataObject';
 import UserSessionDao from '../Dao/UserSessionDao';
+import { add } from 'date-fns';
 
 //todo: remove Token field from DDL
 export default class UserSession extends DataObject {
     //session period in minutes
-    static readonly DEFAULT_SESSION_PERIOD = 60;
+    static readonly DEFAULT_SESSION_PERIOD = 60*12;
 
     static async load(id: number): Promise<UserSession> {
         const dao = new UserSessionDao();
@@ -15,6 +16,8 @@ export default class UserSession extends DataObject {
     static async startSession(userId: number, startDate?: Date): Promise<UserSession> {
         const dao = new UserSessionDao();
         const us = new UserSession(dao);
+        //todo: end existing session if user unnecessarily logging in
+        //await dao.endExisting(userId);
         await us.startSession(userId, startDate);
         return us;
     }
@@ -54,5 +57,12 @@ export default class UserSession extends DataObject {
             this.endDate = endDate;
             await this._dao.save(this);
         }
+    }
+
+    calculateEndDate(): Date {
+        if (!this.startDate) {
+            throw new Error('StartDate is not defined');
+        }
+        return add(this.startDate, { minutes: UserSession.DEFAULT_SESSION_PERIOD });
     }
 }

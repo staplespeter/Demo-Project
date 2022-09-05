@@ -1,7 +1,8 @@
 const secureRandomPassword = require('secure-random-password');
 import { randomBytes, pbkdf2 } from 'node:crypto';
+import IPassword from './IPassword';
 
-export default class Password {
+export default class Password implements IPassword {
     private static GENERATED_PWD_LENGTH = 16;
     private static PWD_BYTE_LENGTH = 32;
     private static SALT_BYTE_LENGTH = 32;

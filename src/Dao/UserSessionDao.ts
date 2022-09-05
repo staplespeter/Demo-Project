@@ -14,7 +14,7 @@ export default class UserSessionDao extends Dao<UserSession> {
             return null;
         }
         else if (this._rs.recordCount > 1) {
-            //todo: close off open sessions excpet for the latest. return latest 
+            //todo: close off open sessions except for the latest. return latest 
             throw new Error(`More than one session for user ID ${userId} found`);
         }
         else if (this._rs.recordCount == 1) {
@@ -50,5 +50,11 @@ export default class UserSessionDao extends Dao<UserSession> {
         else if (savedCount > 0) {
             o.id = this._rs.currentRecord.getField('Id').value;
         }
+    }
+
+    async endExisting(userId: number) {
+        //will end all existing sessions
+        //todo: implementation
+        throw new Error('not implemented');
     }
 }
