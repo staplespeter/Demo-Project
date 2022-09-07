@@ -6,7 +6,7 @@ import IRecord from "./IRecord";
 export default class Record implements IRecord {
     private _fieldDefs: Array<IFieldDef>;
 
-    readonly primaryKeyField: IField = null;
+    readonly primaryKeyField: IField;
     
     get fieldCount(): number {
         return this._fields.length;

@@ -4,7 +4,6 @@ module.exports = {
   testEnvironment: 'node',
   "testMatch": [
     "**/*.steps.js",
-    "**/*.test.ts",
-    "**/*.test.js"
+    "**/*.test.ts"
   ],
 };

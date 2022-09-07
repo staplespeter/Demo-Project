@@ -170,9 +170,7 @@ export default class MySqlDatasource extends Datasource {
             await session.commit();
 
             for (let x = 0; x < recordsToInsert.length; x++) {
-                if (recordsToInsert[x].primaryKeyField) {
-                    recordsToInsert[x].primaryKeyField.value = insertIds[x];
-                }
+                recordsToInsert[x].primaryKeyField.value = insertIds[x];
             }
 
             for (let record of records) {

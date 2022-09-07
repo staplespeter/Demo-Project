@@ -209,7 +209,7 @@ describe('MySqlData source tests', () => {
             recordsToUpdate[0].getField('PasswordSalt').value = 'testsaltvaluethatis44charslong1234567890ABCF';
 
             let f = async (): Promise<number> => { return userDatasource.save(recordsToUpdate) };
-            expect(await f).rejects.toThrow('Primary key field is not defined.  Unable to update record');
+            expect(f).rejects.toThrow('Primary key field is not defined.  Unable to save record');
         }
         finally {
             userFieldDefs[pkFieldDefIndex] = pkFieldDef;

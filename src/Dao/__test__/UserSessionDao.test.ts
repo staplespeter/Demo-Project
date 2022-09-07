@@ -32,7 +32,7 @@ describe('UserSessionDao tests', () => {
         const rs = new Recordset(mockMySqlDataSourceUserSession);
         const dao = new UserSessionDao(rs);
         const f = async (): Promise<UserSession> => { return dao.load(103) };
-        expect(await f).rejects.toThrow('More than one session for user ID 103 found');
+        expect(f).rejects.toThrow('More than one session for user ID 103 found');
     });
 
     it('can save a new session', async () => {
@@ -71,8 +71,8 @@ describe('UserSessionDao tests', () => {
         us.userId = 105;
         const rs = new Recordset(mockMySqlDataSourceUserSession);
         const dao = new UserSessionDao(rs);
-        const f = async (): Promise<void> => { dao.save(us) };
-        expect(await f).rejects.toThrow('Unable to save session');
+        const f = async (): Promise<void> => { return dao.save(us) };
+        expect(f).rejects.toThrow('Unable to save session');
         expect(mockSave).toBeCalledTimes(1);
         expect(mockSave).toBeCalledWith([rs.currentRecord]);
     });

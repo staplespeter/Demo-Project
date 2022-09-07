@@ -33,7 +33,7 @@ describe('UserDao tests', () => {
         const rs = new Recordset(mockMySqlDataSourceUser);
         const dao = new UserDao(rs);
         const f = async (): Promise<User> => { return dao.load('test@test3.com') };
-        expect(await f).rejects.toThrow('More than one user with Email test@test3.com found');
+        expect(f).rejects.toThrow('More than one user with Email test@test3.com found');
     });
 
     it('can save a new user', async () => {
@@ -76,7 +76,7 @@ describe('UserDao tests', () => {
         const rs = new Recordset(mockMySqlDataSourceUser);
         const dao = new UserDao(rs);
         const f = async (): Promise<void> => { return dao.save(u) };
-        expect(await f).rejects.toThrow('Unable to save user');
+        expect(f).rejects.toThrow('Unable to save user');
         expect(mockSave).toBeCalledTimes(1);
         expect(mockSave).toBeCalledWith([rs.currentRecord]);
     });

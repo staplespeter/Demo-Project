@@ -2,17 +2,14 @@ import Recordset from "../RecordSet";
 import IRecordset from "../IRecordset";
 //import MySqlDatasource from "../MySql/MySqlDatasource";
 //jest.mock("../MySql/MySqlDatasource");
-import { mockMySqlDataSourceUser, mockLoad, mockSave } from "../MySql/__mocks__/MockMySqlDatasourceUser";
+import { getMockDataSource, mockLoad, mockSave } from "../MySql/__mocks__/MockMySqlDatasource";
 
 
 describe("Recordset tests", () => {
     let userRs: IRecordset;
 
-    beforeAll(() => {
-        userRs = new Recordset(mockMySqlDataSourceUser);
-    });
-
     beforeEach(() => {
+        userRs = new Recordset(getMockDataSource());
         mockLoad.mockClear();
         mockSave.mockClear();
     });
@@ -20,7 +17,7 @@ describe("Recordset tests", () => {
     it("can load a dataset and navigate", async () => {
         let count = await userRs.load();
         expect(mockLoad).toBeCalledTimes(1);
-        expect(mockLoad).toBeCalledWith(null, null, null);
+        expect(mockLoad).toBeCalledWith(undefined, undefined, undefined);
         expect(userRs.fieldCount).toEqual(2);
         expect(count).toEqual(4);
         expect(userRs.recordCount).toEqual(4);
