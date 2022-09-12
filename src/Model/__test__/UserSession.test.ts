@@ -1,3 +1,4 @@
+import add from 'date-fns/add';
 import UserSessionDao from '../../Dao/UserSessionDao';
 import UserSession from '../UserSession';
 
@@ -113,5 +114,17 @@ describe('UserSession tests', () => {
         expect(us.startDate).toBeNull();
         expect(us.endDate).toBeNull();
         expect(us.userId).toBeNull();
+    });
+
+    it('can calculate a session end date', () => {
+        const us = new UserSession(null);
+        us.startDate = new Date('2001-01-01 12:34:56');
+        expect(us.calculateEndDate().valueOf()).toEqual(add(us.startDate, { minutes: UserSession.DEFAULT_SESSION_PERIOD }).valueOf());
+    });
+
+    it('will not calculate a session end date when no start date is set', () => {
+        const us = new UserSession(null);
+        const f = () => { return us.calculateEndDate() };
+        expect(f).toThrow('StartDate is not defined');
     });
 });

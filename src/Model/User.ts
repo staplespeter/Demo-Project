@@ -20,6 +20,7 @@ export default class User extends DataObject {
     static async register(email: string, password: string): Promise<User> {
         const dao = new UserDao();
         const u = new User(dao);
+        //todo: validate email before querying
         u.email = email;
         await u.setPassword(password);
         if (!await u.save()) {
@@ -30,7 +31,6 @@ export default class User extends DataObject {
     }
 
     constructor(dao: UserDao) {
-        //todo: validate email before querying
         super();
         this._dao = dao;
     }

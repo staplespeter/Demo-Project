@@ -16,8 +16,16 @@ describe('User tests', () => {
         expect(u.passwordSalt.length).toEqual(44);
     });
 
-    it('can authenticate a user', async () => {
-        throw new Error('test not implemented');
+    it('can authenticate a user with a valid password', async () => {
+        const u = new User(null);
+        await u.setPassword('testPassword');
+        expect(await u.authenticate('testPassword')).toEqual(true);
+    });
+
+    it('will not authenticate a user with an invalid password', async () => {
+        const u = new User(null);
+        await u.setPassword('testPassword');
+        expect(await u.authenticate('notTestPassword')).toEqual(false);
     });
 
     it('can save a user', async () => {
