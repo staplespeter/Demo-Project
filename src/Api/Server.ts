@@ -1,9 +1,11 @@
 import express from "express";
 import AuthRoutes from "./Auth/AuthRoutes";
-import http from 'https';
+import http from 'http';
 
 export default class Server {
     private httpServer: http.Server;
+
+    static DEFAULT_PORT = 25025;
 
     constructor() {
         const expressApp = express();
@@ -16,21 +18,44 @@ export default class Server {
             }
             next();
         });
-        expressApp.use('/', AuthRoutes.getRoutes());
+        expressApp.use(express.static('wwwroot', { index: false }));
+        expressApp.use('/auth', AuthRoutes.getRoutes());
         expressApp.use((req, res, next) => {
-            res.status(404).send('Requested method not found');
+            res.status(404).send('Requested route not found');
         });
 
         this.httpServer = http.createServer(expressApp);
+        //todo: if server cannot bind to port
+        // this.httpServer.on('error', (err) => {
+        //     if (err.name == 'EADDRINUSE' ) {
+        //     }
+        // });
+
+        process.on('SIGTERM', () => {
+            this.httpServer.close(() => {
+                console.log('http server stopped');
+            });
+        });
     }
 
-    start() {
-        const port = process.env.port ?? 25025;
-        this.httpServer.listen(port);
+    start(): void;
+    start(port: number): void;
+    start(port?: number): void {
+        let p = port ?? process.env.port ?? Server.DEFAULT_PORT;
+        this.httpServer.listen({
+            port: p,
+            host: 'localhost'
+        },
+        () => {
+            console.log('http server started');
+        });
     }
 
     stop() {
-        this.httpServer.close();
+        this.httpServer.close(() => {
+            //todo: enable and stop jest from complaining about console.log after tests stopped
+            //console.log('http server stopped');
+        });
     }
 }
 
