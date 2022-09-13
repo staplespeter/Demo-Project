@@ -22,6 +22,7 @@ export default class AuthController implements IAuthApi {
                     userSessionId: userSession.id,
                     sessionEndDate: userSession.calculateEndDate()
                 })
+                await token.generate();
                 result.token = token.value;
             }
         }
@@ -41,7 +42,7 @@ export default class AuthController implements IAuthApi {
             if (!user) {
                 result.error = 'Invalid username/password';
             }
-            else if (!user.authenticate(password)) {
+            else if (!await user.authenticate(password)) {
                 result.error = 'Invalid username/password';
             }
             else {
@@ -50,6 +51,7 @@ export default class AuthController implements IAuthApi {
                     userSessionId: userSession.id,
                     sessionEndDate: userSession.calculateEndDate()
                 });
+                await token.generate();
                 result.token = token.value;
             }
         }
@@ -71,7 +73,7 @@ export default class AuthController implements IAuthApi {
             if (!token.isValid) {
                 result.error = 'Authorisation token is not valid';
             }
-            else if (!token.hasExpired) {
+            else if (token.hasExpired) {
                 result.redirectUrl = AuthController.LOGIN_URL;
             }
             else {
@@ -79,7 +81,7 @@ export default class AuthController implements IAuthApi {
                     userSessionId: token.data.userSessionId,
                     sessionEndDate: Jwt.refreshDate()
                 });
-                newToken.generate();
+                await newToken.generate();
                 result.token = newToken.value;
             }
         }
