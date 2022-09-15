@@ -1,13 +1,17 @@
 import Server from '../Server';
 import axios from 'axios';
+import https from 'https';
 jest.mock('../Auth/AuthController');
 
-//todo: HTTPS
+//todo: HTTP/2
 const client = axios.create({
-    baseURL: 'http://localhost:25025/',
+    baseURL: 'https://localhost:25025/',
     validateStatus: () => {
         return true;
-    }
+    },
+    httpsAgent: new https.Agent({
+        rejectUnauthorized: false
+    })
 });
 
 describe('Server start tests', () => {
@@ -15,7 +19,7 @@ describe('Server start tests', () => {
         const s = new Server();
         try {
             s.start(25050);
-            const res = await client.post('http://localhost:25050/test');
+            const res = await client.post('https://localhost:25050/test');
             expect(res.status).toEqual(404);
             expect(res.data).toEqual('Requested route not found');
         }

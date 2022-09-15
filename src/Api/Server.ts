@@ -1,9 +1,10 @@
 import express from "express";
 import AuthRoutes from "./Auth/AuthRoutes";
-import http from 'http';
+import https from 'https';
+import fs from 'fs';
 
 export default class Server {
-    private httpServer: http.Server;
+    private httpServer: https.Server;
 
     static DEFAULT_PORT = 25025;
 
@@ -24,7 +25,10 @@ export default class Server {
             res.status(404).send('Requested route not found');
         });
 
-        this.httpServer = http.createServer(expressApp);
+        this.httpServer = https.createServer({
+            key: fs.readFileSync('./tls/demo-project.key'),
+            cert: fs.readFileSync('./tls/demo-project.cert')
+        }, expressApp);
         //todo: if server cannot bind to port
         // this.httpServer.on('error', (err) => {
         //     if (err.name == 'EADDRINUSE' ) {
