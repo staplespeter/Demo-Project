@@ -6,7 +6,7 @@ import { SignJWT, jwtVerify, JWTVerifyResult } from 'jose';
 
 export default class Jwt implements IToken {
     private static ALGORITHM = 'HS256';
-    private static ISSUER = 'demoprojectserver';
+    private static ISSUER = 'http://demoprojectserver';
     private static AUDIENCE = 'demoprojectclient';
 
     private static readonly SECRET_KEY = 'DEMO-PROJECT-SECRET-KEY';

@@ -56,12 +56,12 @@ export default class AuthRoutes {
                 return;
             }
             result = await AuthController.authenticate(token);
-            if (result.error) {
-                res.status(500).send(result);
+            if (result.redirectUrl) {
+                res.redirect(302, result.redirectUrl);
                 return;
             }
-            else if (result.redirectUrl) {
-                res.redirect(302, result.redirectUrl);
+            if (result.error) {
+                res.status(500).send(result);
                 return;
             }
             res.status(201).send(result);

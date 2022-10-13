@@ -11,8 +11,10 @@ export default class Server {
     constructor() {
         const expressApp = express();
         expressApp.use((req, res, next) => {
-            res.header('Access-Control-Allow-Origin', '*');
-            res.header('Access-Control-Allow-Headers', 'origin, X-Requested-With, Content-Type, Accept, Authorization');
+            //todo: add list of allowed origins to config file, check request origin,
+            //and set Access-Control-Allow-Origin to appropriate one.
+            res.header('Access-Control-Allow-Origin', 'https://localhost');
+            res.header('Access-Control-Allow-Headers', 'origin, Content-Type, Accept, Cookie');
             if (req.method.toUpperCase() == 'OPTIONS') {
                 res.header('Access-Control-Allow-Methods', 'POST');
                 return res.sendStatus(200);
