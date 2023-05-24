@@ -6,4 +6,5 @@ module.exports = {
     "**/*.steps.js",
     "**/*.test.ts"
   ],
+  modulePathIgnorePatterns: ['/mnt/Data/Repos/Demo-Project/build/']
 };
