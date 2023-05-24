@@ -1,7 +1,8 @@
 import express from "express";
-import AuthRoutes from "./Auth/AuthRoutes";
+
 import https from 'https';
 import fs from 'fs';
+import AuthRoutes from "./Auth/AuthRoutes";
 
 export default class Server {
     private httpServer: https.Server;
@@ -36,12 +37,6 @@ export default class Server {
         //     if (err.name == 'EADDRINUSE' ) {
         //     }
         // });
-
-        process.on('SIGTERM', () => {
-            this.httpServer.close(() => {
-                console.log('http server stopped');
-            });
-        });
     }
 
     start(): void;
@@ -57,11 +52,30 @@ export default class Server {
         });
     }
 
-    stop() {
-        this.httpServer.close(() => {
-            //todo: enable and stop jest from complaining about console.log after tests stopped
-            //console.log('http server stopped');
+    async stop() {
+        console.log('stopping http server');
+
+        let closed = false;
+        let iterations = 0;
+        let p = new Promise((resolve, reject) => {
+            let id = setInterval(() => {
+                iterations++;
+                if (closed) {
+                    clearInterval(id);
+                    resolve(closed);
+                }
+                else if (iterations == 10) {
+                    clearInterval(id);
+                    reject("http server stop timeout");
+                }
+            }, 500);
         });
+        p.then(() => console.log('http server stopped'));
+        p.catch((err) => console.log(err));
+
+        this.httpServer.close(() => {
+            closed = true;
+        });
+        await p;
     }
 }
-

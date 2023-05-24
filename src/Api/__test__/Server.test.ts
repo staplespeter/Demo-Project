@@ -24,7 +24,7 @@ describe('Server start tests', () => {
             expect(res.data).toEqual('Requested route not found');
         }
         finally {
-            s.stop();
+            await s.stop();
         }
     });
 });
@@ -37,8 +37,8 @@ describe('Server API tests', () => {
         s.start();
     });
 
-    afterAll(() => {
-        s.stop();
+    afterAll(async () => {
+        await s.stop();
     });
 
     it('can return the HTTP method options', async () => {
