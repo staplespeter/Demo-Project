@@ -8,7 +8,7 @@
     "test": "jest",
     "tsbuild": "tsc --build",
     "fixjsextensions": "ts-add-js-extension --dir=build",
-    "build": "npm run clean && npm run tsbuild && parcel build",
+    "build": "npm run clean && npm run tsbuild && npm run fixjsextensions && parcel build",
     "server": "node ./build/Api/index.js",
     "client": "parcel --open",
     "start": "concurrently \"npm run server\" && \"npm run client\""
