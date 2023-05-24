@@ -1,4 +1,4 @@
-import add from 'date-fns/add';
+import { add } from 'date-fns';
 import UserSessionDao from '../../Dao/UserSessionDao';
 import UserSession from '../UserSession';
 

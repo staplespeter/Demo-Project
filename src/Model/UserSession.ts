@@ -1,6 +1,7 @@
 import DataObject from './DataObject';
 import UserSessionDao from '../Dao/UserSessionDao';
-import add from 'date-fns/add';
+import { add } from 'date-fns';
+
 
 //todo: remove Token field from DDL
 export default class UserSession extends DataObject {

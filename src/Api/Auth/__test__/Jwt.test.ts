@@ -1,5 +1,5 @@
 import Jwt from "../Jwt";
-import add from 'date-fns/add';
+import { add } from 'date-fns';
 import UserSession from "../../../Model/UserSession";
 import { jwtVerify, JWTVerifyResult, SignJWT } from "jose";
 

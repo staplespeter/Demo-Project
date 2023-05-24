@@ -1,4 +1,4 @@
-const secureRandomPassword = require('secure-random-password');
+import secureRandomPassword from 'secure-random-password';
 import { randomBytes, pbkdf2 } from 'node:crypto';
 import IPassword from './IPassword';
 

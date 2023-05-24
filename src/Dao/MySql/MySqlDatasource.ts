@@ -1,4 +1,4 @@
-const mysqlx = require('@mysql/xdevapi');
+import mysqlx from '@mysql/xdevapi';
 import { mysqlxConfig } from "../appdata";
 import FieldDef from "../FieldDef";
 import Datasource from "../Datasource";
