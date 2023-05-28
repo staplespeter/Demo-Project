@@ -102,6 +102,7 @@ export default class Jwt implements IToken {
             this._isValid = true;
         }
         catch (err) {
+            //TODO: use a file logger instead of console
             console.log(err);
             this._isValid = false;
         }

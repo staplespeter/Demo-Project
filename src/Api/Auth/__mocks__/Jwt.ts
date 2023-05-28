@@ -1,5 +1,3 @@
-import add from "date-fns/add";
-import isPast from "date-fns/isPast";
 import TokenData from "../TokenData";
 
 export default class Jwt {

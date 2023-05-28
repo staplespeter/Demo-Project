@@ -1,5 +1,5 @@
 import express from "express";
-
+import cors from 'cors';
 import https from 'https';
 import fs from 'fs';
 import AuthRoutes from "./Auth/AuthRoutes";
@@ -9,19 +9,37 @@ export default class Server {
 
     static DEFAULT_PORT = 25025;
 
-    constructor() {
+    constructor() {      
         const expressApp = express();
-        expressApp.use((req, res, next) => {
-            //todo: add list of allowed origins to config file, check request origin,
-            //and set Access-Control-Allow-Origin to appropriate one.
-            res.header('Access-Control-Allow-Origin', 'https://localhost');
-            res.header('Access-Control-Allow-Headers', 'origin, Content-Type, Accept, Cookie');
-            if (req.method.toUpperCase() == 'OPTIONS') {
-                res.header('Access-Control-Allow-Methods', 'POST');
-                return res.sendStatus(200);
-            }
-            next();
-        });
+        const corsOptions = {
+            origin: function (origin: any, cb: any) {
+                try {
+                    fs.open('./wwwroot/CORS-allowed-list.txt', 'r', (err, fd) => {
+                        if (err) {
+                            cb('Unable to verify origin', false);
+                        }
+                        else if (fd > 0) {
+                            fs.readFile(fd, 'ascii', (err, data) => {
+                                const allowedList = data.split('\n');
+                                if (allowedList.includes(origin)) {
+                                    cb(null, true);
+                                }
+                                else {
+                                    cb('Origin is not allowed', false);
+                                }
+                            });
+                        }
+                    });
+                }
+                catch (err) {
+                    cb(err, false);
+                }
+            },
+            methods: ['POST'],
+            allowedHeaders: ['origin', 'Content-Type', 'Accept', 'Cookie'],
+            optionsSuccessStatus: 200
+        };
+        expressApp.use(cors(corsOptions));
         expressApp.use(express.static('wwwroot', { index: false }));
         expressApp.use('/auth', AuthRoutes.getRoutes());
         expressApp.use((req, res, next) => {

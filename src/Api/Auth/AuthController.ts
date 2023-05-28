@@ -27,6 +27,7 @@ export default class AuthController implements IAuthApi {
             }
         }
         catch (err) {
+            //TODO: use a file logger instead of console
             console.log(err);
             result.error = (err as Error).message;
         }
@@ -56,6 +57,7 @@ export default class AuthController implements IAuthApi {
             }
         }
         catch (err) {
+            //TODO: use a file logger instead of console
             console.log(err);
             result.error = (err as Error).message;
         }
@@ -86,6 +88,7 @@ export default class AuthController implements IAuthApi {
             }
         }
         catch (err) {
+            //TODO: use a file logger instead of console
             console.log(err);
             result.error = (err as Error).message;
         }
