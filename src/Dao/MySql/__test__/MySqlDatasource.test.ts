@@ -234,8 +234,9 @@ describe('MySqlData source tests', () => {
             .set('PasswordSalt', 'testsaltvaluethatis44charslong1234567890ABCD')
             .set('DateRegistered', null);
         recordsToInsert[0] = new Record(fieldDefs, rowData, true);
+        //test for insert with undefined PK value.
         rowData = new Map<string, any>()
-            .set('Id', null)
+            .set('Id', undefined)
             .set('Email', 'test6@test.com')
             .set('PasswordHash', 'testhashvaluethatis44charslong1234567890ABCD')
             .set('PasswordSalt', 'testsaltvaluethatis44charslong1234567890ABCD')

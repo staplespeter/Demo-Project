@@ -116,6 +116,10 @@ export default class MySqlDatasource extends Datasource {
         }
     }
 
+    //TODO: Add support for externally controlled transactions.
+    //This needs to extend up to the DAOs, where awareness of dependant objects resides.
+    //Any higher and DB is fully abstracted away, i.e. no transaction knowledge.
+    //Any lower and object interdependance is not abstract enough.
     async save(records: Array<IRecord>): Promise<number> {
         let session: any = null;
         if (!records || records.length == 0) {
@@ -126,9 +130,11 @@ export default class MySqlDatasource extends Datasource {
             throw new ReferenceError('Primary key field is not defined.  Unable to save records');
         }
 
-        //todo: handling of non-autoincremnting PK fields
-        const recordsToUpdate = records.filter(r => r.primaryKeyField.value !== null);
-        const recordsToInsert = records.filter(r => r.primaryKeyField.value === null);
+        //TODO: handling of non-autoincremnting PK fields.
+
+        //Checking for null or undefined on PK fields.
+        const recordsToUpdate = records.filter(r => (r.primaryKeyField.value ?? null) !== null);
+        const recordsToInsert = records.filter(r => (r.primaryKeyField.value ?? null) === null);
         if (recordsToUpdate.length + recordsToInsert.length == 0) {
             return;
         }

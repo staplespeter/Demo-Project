@@ -13,7 +13,8 @@ export default class UserDao extends Dao<User> {
         if (!this._rs) {
             this._rs = await DaoFactory.getRecordSet('MySQL', 'User');
         }
-        await this._rs.load(['Id', 'Email', 'PasswordHash', 'PasswordSalt', 'DateRegistered'], `WHERE 'Email' = ${email}`);
+
+        await this._rs.load(['Id', 'Email', 'PasswordHash', 'PasswordSalt', 'DateRegistered'], `'Email' == "${email}"`);
         if (this._rs.recordCount == 0) {
             return null;
         }
@@ -39,7 +40,7 @@ export default class UserDao extends Dao<User> {
         if (this._rs.recordCount == 0) {
             this._rs.addRecord();
         }
-        this._rs.currentRecord.getField('Id').value = o.id;
+        this._rs.currentRecord.getField('Id').value = o.id ?? null;
         this._rs.currentRecord.getField('Email').value = o.email;
         this._rs.currentRecord.getField('PasswordHash').value = o.passwordHash;
         this._rs.currentRecord.getField('PasswordSalt').value = o.passwordSalt;

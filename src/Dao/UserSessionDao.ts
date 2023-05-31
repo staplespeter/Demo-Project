@@ -8,8 +8,7 @@ export default class UserSessionDao extends Dao<UserSession> {
             //todo: move 'MySQL' to a config options file and expose as system level variable.
             this._rs = await DaoFactory.getRecordSet('MySQL', 'UserSession');
         }
-        await this._rs.load(['Id', 'StartDate', 'EndDate', 'UserId'],
-            `WHERE 'UserId' = ${userId} AND 'EndDate IS NULL`);
+        await this._rs.load(['Id', 'StartDate', 'EndDate', 'UserId'], `'UserId' == ${userId} AND 'EndDate IS NULL`);
         if (this._rs.recordCount == 0) {
             return null;
         }
