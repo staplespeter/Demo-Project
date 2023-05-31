@@ -1,5 +1,6 @@
 import mysqlx from '@mysql/xdevapi';
 import { mysqlxConfig } from "../appdata";
+import { mysqlxTestConfig } from "../__test__/appdata";
 import FieldDef from "../FieldDef";
 import Datasource from "../Datasource";
 import IFieldDef from "../IFieldDef";
@@ -8,11 +9,13 @@ import { DaoType } from "../types";
 import Record from "../Record";
 
 export default class MySqlDatasource extends Datasource {
+    private static mySqlConfig = process.env.NODE_ENV == 'test' ? mysqlxTestConfig : mysqlxConfig;
+
     static async getFieldDefs(objectName: DaoType): Promise<Array<IFieldDef>> {
         let session: any = null;
 
         try {
-            session = await mysqlx.getSession(mysqlxConfig);
+            session = await mysqlx.getSession(MySqlDatasource.mySqlConfig);
             let results = await session
                 .sql("SELECT COLUMN_NAME, COLUMN_KEY FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA=? AND TABLE_NAME=?")
                 .bind([mysqlxConfig.schema, objectName])
@@ -71,7 +74,7 @@ export default class MySqlDatasource extends Datasource {
         try {
             this.fieldDefs = new Array();
 
-            session = await mysqlx.getSession(mysqlxConfig);
+            session = await mysqlx.getSession(MySqlDatasource.mySqlConfig);
             let query = session.getDefaultSchema().getTable(this._objectName);
             query = query.select(fieldNames);
             query = filter ? query.where(filter) : query;
@@ -140,7 +143,7 @@ export default class MySqlDatasource extends Datasource {
         }
 
         try {
-            session = await mysqlx.getSession(mysqlxConfig);
+            session = await mysqlx.getSession(MySqlDatasource.mySqlConfig);
             let table = session.getDefaultSchema().getTable(this.objectName);
             await session.startTransaction();
 

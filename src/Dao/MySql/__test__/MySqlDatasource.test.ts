@@ -24,10 +24,6 @@ describe('MySqlData source tests', () => {
         userDatasource = new MySqlDatasource('User');
     });
 
-    beforeEach(async () => {
-        
-    });
-
     afterAll(async () => {
         if (session) {
             await (async () => {

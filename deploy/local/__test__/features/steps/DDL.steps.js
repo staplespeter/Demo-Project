@@ -4,7 +4,7 @@ const { defineFeature, loadFeature } = require('jest-cucumber');
 const mysqlx = require('@mysql/xdevapi');
 
 const feature = loadFeature("./deploy/local/__test__/features/DDL.feature");
-const mysqlxConfig = { host: 'localhost', port: 33060, user: 'TestRunner', password: 'TestRunner', schema: 'DemoProject' };
+const mysqlxConfig = { host: 'localhost', port: 33060, user: 'TestRunner', password: 'TestRunner', schema: 'DemoProject_test' };
 
 defineFeature(feature, test => {
     var session = null;

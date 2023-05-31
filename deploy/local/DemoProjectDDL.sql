@@ -1,5 +1,3 @@
-USE DemoProject;
-
 CREATE TABLE IF NOT EXISTS User (
   Id INT PRIMARY KEY AUTO_INCREMENT,
   Email VARCHAR(256) NOT NULL UNIQUE,
@@ -26,11 +24,3 @@ CREATE TABLE IF NOT EXISTS UserSession (
   UserId INT REFERENCES User (Id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-
-CREATE ROLE 'Application';
-GRANT INSERT,SELECT,UPDATE,DELETE ON DemoProject.User TO 'Application';
-GRANT INSERT,SELECT,UPDATE,DELETE ON UserSession TO 'Application';
-
-CREATE USER 'ServerApplication' IDENTIFIED BY 'ServerApplication';
-GRANT 'Application' TO 'ServerApplication';
-SET DEFAULT ROLE ALL TO 'ServerApplication';
