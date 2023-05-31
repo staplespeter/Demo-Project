@@ -50,7 +50,7 @@ const mockLoadResult = [
 ];
 const mockLoadFn = async function (fields: Array<string> = null, filter: string = null, maxRows: number = 100) {
     const flds= fields;
-    const email = filter.substring("WHERE 'Email' = ".length);
+    const email = filter.substring("'Email' == \"".length, filter.length - 1);
 
     return mockLoadResult.filter(r => r.getField('Email').value == email);
 }
