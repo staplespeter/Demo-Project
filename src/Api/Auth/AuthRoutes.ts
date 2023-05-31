@@ -19,6 +19,7 @@ export default class AuthRoutes {
             }
             result = await AuthController.register(req.body.username, req.body.password);
             if (result.error) {
+                //TODO: Have AuthController error enum that maps to better HTTP response codes.
                 res.status(500).send(result);
                 return;
             }

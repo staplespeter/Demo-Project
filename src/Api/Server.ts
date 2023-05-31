@@ -1,5 +1,5 @@
 import * as inspector from 'node:inspector';
-import express, { NextFunction } from "express";
+import express, { ErrorRequestHandler } from "express";
 import cors from 'cors';
 import https from 'https';
 import fs from 'fs';
@@ -51,7 +51,7 @@ export default class Server {
             optionsSuccessStatus: 200
         };
         expressApp.use(cors(corsOptions));
-        expressApp.use((err: any, req: any, res: any, next: NextFunction) => {
+        expressApp.use(function (err, req, res, next) {
             if (err) {
                 res.type('appplication.json');
                 res.status(400).send({ error: err });
@@ -59,7 +59,7 @@ export default class Server {
             else {   
                 next();
             }
-        });
+        } as ErrorRequestHandler);
         expressApp.use(express.static('wwwroot', { index: false }));
         expressApp.use('/auth', AuthRoutes.getRoutes());
         expressApp.use((req, res, next) => {
