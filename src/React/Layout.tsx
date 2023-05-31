@@ -10,7 +10,7 @@ export default class Layout extends React.Component<PropsWithChildren<Props>> {
     
     render() {
         return (
-            <div>
+            <div className='Layout'>
                 {this.props.children}
             </div>
         );

@@ -11,7 +11,7 @@ export default class Page extends React.Component<PropsWithChildren<Props>> {
 
     render() {
         return (
-            <div>
+            <div className='Page'>
                 {this.props.children}
             </div>
         );

@@ -16,34 +16,46 @@ export default class ClientAuthentication extends EventTarget implements IClient
 
     async signIn(username: string, password: string): Promise<boolean> {
         this._lastError = null;
-        const response = await this._client.axios.post('auth/login', {
-            username: username,
-            password: password
-        });
-        if (response.status == 201) {
-            window.localStorage.setItem(ClientAuthentication.TOKEN_STORAGE_KEY, response.data.token);
-            return true;
+        try {
+            const response = await this._client.axios.post('auth/login', {
+                username: username,
+                password: password
+            });
+            if (response.status == 201) {
+                window.localStorage.setItem(ClientAuthentication.TOKEN_STORAGE_KEY, response.data.token);
+                return true;
+            }
+            if (response.data.error) {
+                this._lastError = response.data.error;
+            }
+            return false;
         }
-        if (response.data.error) {
-            this._lastError = response.data.error;
+        catch (err: any) {
+            this._lastError = err;
+            return false;    
         }
-        return false;
     }
 
     async signUp(username: string, password: string): Promise<boolean> {
         this._lastError = null;
-        const response = await this._client.axios.post('auth/register', {
-            username: username,
-            password: password
-        });
-        if (response.status == 201) {
-            window.localStorage.setItem(ClientAuthentication.TOKEN_STORAGE_KEY, response.data.token);
-            return true;
+        try {
+            const response = await this._client.axios.post('auth/register', {
+                username: username,
+                password: password
+            });
+            if (response.status == 201) {
+                window.localStorage.setItem(ClientAuthentication.TOKEN_STORAGE_KEY, response.data.token);
+                return true;
+            }
+            if (response.data.error) {
+                this._lastError = response.data.error;
+            }
+            return false;
         }
-        if (response.data.error) {
-            this._lastError = response.data.error;
+        catch (err: any) {
+            this._lastError = err;
+            return false;
         }
-        return false;
     }
 
 }
