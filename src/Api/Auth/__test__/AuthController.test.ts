@@ -5,6 +5,9 @@ jest.mock('../Jwt');
 describe('AuthController tests', () => {
     let AuthController: any;
 
+    //TODO: Ensure all manual mocks are used correctly in other tests
+    //i.e. dynamically import classes dependant on mocks after jest.mock() calls,
+    //and perhas replace use of mocked class functions with a class mock?
     beforeAll(async () => {
         AuthController = (await import('../AuthController')).default;
     });
@@ -14,6 +17,34 @@ describe('AuthController tests', () => {
         expect(result.error).toBeUndefined();
         expect(result.redirectUrl).toBeUndefined();
         expect(result.token).toEqual('102_2002');
+    });
+
+    it('will return an error when registering a user if no username is specified', async () => {
+        const result = await AuthController.register(null, 'password');
+        expect(result.error).toEqual('Invalid username/password');
+        expect(result.redirectUrl).toBeUndefined();
+        expect(result.token).toBeUndefined();
+    });
+
+    it('will return an error when registering a user if a blank username is specified', async () => {
+        const result = await AuthController.register('', 'password');
+        expect(result.error).toEqual('Invalid username/password');
+        expect(result.redirectUrl).toBeUndefined();
+        expect(result.token).toBeUndefined();
+    });
+
+    it('will return an error when registering a user if no password is specified', async () => {
+        const result = await AuthController.register('NonExistingUser', null);
+        expect(result.error).toEqual('Invalid username/password');
+        expect(result.redirectUrl).toBeUndefined();
+        expect(result.token).toBeUndefined();
+    });
+
+    it('will return an error when registering a user if a blank password is specified', async () => {
+        const result = await AuthController.register('NonExistingUser', '');
+        expect(result.error).toEqual('Invalid username/password');
+        expect(result.redirectUrl).toBeUndefined();
+        expect(result.token).toBeUndefined();
     });
 
     it('will return an error when registering a user if that user already exists', async () => {

@@ -11,19 +11,24 @@ export default class AuthController implements IAuthApi {
         const result = new AuthResult();
 
         try {
-            let user = await User.load(username);
-            if (user) {
-                result.error = 'Username already exists';
-            }
+            if (!username || username.length == 0 || !password || password.length == 0){
+                result.error = 'Invalid username/password';
+            }            
             else {
-                user = await User.register(username, password);
-                const userSession = await UserSession.startSession(user.id);
-                const token = new Jwt({
-                    userSessionId: userSession.id,
-                    sessionEndDate: userSession.calculateEndDate()
-                })
-                await token.generate();
-                result.token = token.value;
+                let user = await User.load(username);
+                if (user) {
+                    result.error = 'Username already exists';
+                }
+                else {
+                    user = await User.register(username, password);
+                    const userSession = await UserSession.startSession(user.id);
+                    const token = new Jwt({
+                        userSessionId: userSession.id,
+                        sessionEndDate: userSession.calculateEndDate()
+                    })
+                    await token.generate();
+                    result.token = token.value;
+                }
             }
         }
         catch (err) {
@@ -39,21 +44,26 @@ export default class AuthController implements IAuthApi {
         const result = new AuthResult();
 
         try {
-            let user = await User.load(username);
-            if (!user) {
+            if (!username || username.length == 0 || !password || password.length == 0){
                 result.error = 'Invalid username/password';
-            }
-            else if (!await user.authenticate(password)) {
-                result.error = 'Invalid username/password';
-            }
+            }            
             else {
-                const userSession = await UserSession.startSession(user.id);
-                const token = new Jwt({
-                    userSessionId: userSession.id,
-                    sessionEndDate: userSession.calculateEndDate()
-                });
-                await token.generate();
-                result.token = token.value;
+                let user = await User.load(username);
+                if (!user) {
+                    result.error = 'Invalid username/password';
+                }
+                else if (!await user.authenticate(password)) {
+                    result.error = 'Invalid username/password';
+                }
+                else {
+                    const userSession = await UserSession.startSession(user.id);
+                    const token = new Jwt({
+                        userSessionId: userSession.id,
+                        sessionEndDate: userSession.calculateEndDate()
+                    });
+                    await token.generate();
+                    result.token = token.value;
+                }
             }
         }
         catch (err) {
