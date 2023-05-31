@@ -1,6 +1,7 @@
 import UserSession from "../Model/UserSession";
 import Dao from "./Dao";
 import DaoFactory from "./DaoFactory";
+import { toMySqlDateTimeGmt } from "./MySql/MySqlDateHelper";
 
 export default class UserSessionDao extends Dao<UserSession> {
     async load(userId: number): Promise<UserSession> {
@@ -38,8 +39,8 @@ export default class UserSessionDao extends Dao<UserSession> {
             this._rs.addRecord();
         }
         this._rs.currentRecord.getField('Id').value = o.id;
-        this._rs.currentRecord.getField('StartDate').value = o.startDate?.toISOString() ?? null;
-        this._rs.currentRecord.getField('EndDate').value = o.endDate?.toISOString() ?? null;
+        this._rs.currentRecord.getField('StartDate').value = toMySqlDateTimeGmt(o.startDate) ?? null;
+        this._rs.currentRecord.getField('EndDate').value = toMySqlDateTimeGmt(o.endDate) ?? null;
         this._rs.currentRecord.getField('UserId').value = o.userId;
         
         const savedCount = await this._rs.save();

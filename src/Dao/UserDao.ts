@@ -1,6 +1,7 @@
 import User from '../Model/User';
 import DaoFactory from './DaoFactory';
 import Dao from './Dao';
+import { toMySqlDateTimeGmt } from './MySql/MySqlDateHelper'
 
 export default class UserDao extends Dao<User> {
     id: number;
@@ -44,7 +45,7 @@ export default class UserDao extends Dao<User> {
         this._rs.currentRecord.getField('Email').value = o.email;
         this._rs.currentRecord.getField('PasswordHash').value = o.passwordHash;
         this._rs.currentRecord.getField('PasswordSalt').value = o.passwordSalt;
-        this._rs.currentRecord.getField('DateRegistered').value = o.dateRegistered?.toISOString() ?? null;
+        this._rs.currentRecord.getField('DateRegistered').value = toMySqlDateTimeGmt(o.dateRegistered) ?? null;
         
         const savedCount = await this._rs.save();
         if (savedCount == 0) {
