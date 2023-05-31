@@ -3,7 +3,7 @@ import axios from 'axios';
 import https from 'https';
 jest.mock('../Auth/AuthController');
 
-//todo: HTTP/2
+//TODO: HTTP/2
 const client = axios.create({
     baseURL: 'https://localhost:25025/',
     validateStatus: () => {
@@ -15,17 +15,24 @@ const client = axios.create({
 });
 
 describe('Server start tests', () => {
-    it('can be started with a specified port and return not found when accessing a missing resource', async () => {
-        const s = new Server();
+    it('can be started with a specified port and block a CORS request', async () => {
+        const oldNodeEnv = process.env.NODE_ENV;
         try {
-            s.start(25050);
-            const res = await client.post('https://localhost:25050/test');
-            expect(res.status).toEqual(404);
-            expect(res.data).toEqual('Requested route not found');
+            process.env.NODE_ENV = 'production';
+            const s = new Server();
+            try {
+                s.start(25051);
+                const res = await client.post('https://localhost:25051/test');
+                expect(res.status).toEqual(400);
+                expect(res.data.error).toEqual("Origin 'undefined' is not allowed");
+            }
+            finally {
+                await s.stop();
+            }
         }
         finally {
-            await s.stop();
-        }
+            process.env.NODE_ENV = oldNodeEnv;
+        }        
     });
 });
 
@@ -39,6 +46,12 @@ describe('Server API tests', () => {
 
     afterAll(async () => {
         await s.stop();
+    });
+
+    it('can return not found when accessing a missing resource', async () => {
+        const res = await client.post('test');
+        expect(res.status).toEqual(404);
+        expect(res.data.error).toEqual('Requested route not found');
     });
 
     it('can return the HTTP method options', async () => {

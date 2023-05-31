@@ -1,4 +1,5 @@
-import express from "express";
+import * as inspector from 'node:inspector';
+import express, { NextFunction } from "express";
 import cors from 'cors';
 import https from 'https';
 import fs from 'fs';
@@ -9,14 +10,23 @@ export default class Server {
 
     static DEFAULT_PORT = 25025;
 
-    constructor() {      
+    constructor() {
         const expressApp = express();
         const corsOptions = {
-            origin: function (origin: any, cb: any) {
+            origin: async function (origin: any, cb: any) {
                 try {
+                    //allow in test/debug mode.
+                    //TODO: Is inspector unnecessary?  What is the ENV when debugging?
+                    //TODO: is this undefined origin a possible hack to bypass CORS in production?
+                    //TODO: setting NODE_ENV and other variables using https://www.npmjs.com/package/dotenv.
+                    if ((!origin && process.env.NODE_ENV.toLowerCase() == 'test') || inspector.url()) {
+                        cb(null, true);
+                        return;
+                    }
+
                     fs.open('./wwwroot/CORS-allowed-list.txt', 'r', (err, fd) => {
                         if (err) {
-                            cb('Unable to verify origin', false);
+                            cb(`Unable to verify origin ${origin}`, false);
                         }
                         else if (fd > 0) {
                             fs.readFile(fd, 'ascii', (err, data) => {
@@ -25,8 +35,9 @@ export default class Server {
                                     cb(null, true);
                                 }
                                 else {
-                                    cb('Origin is not allowed', false);
+                                    cb(`Origin '${origin}' is not allowed`, false);
                                 }
+                                fs.close(fd);
                             });
                         }
                     });
@@ -40,17 +51,27 @@ export default class Server {
             optionsSuccessStatus: 200
         };
         expressApp.use(cors(corsOptions));
+        expressApp.use((err: any, req: any, res: any, next: NextFunction) => {
+            if (err) {
+                res.type('appplication.json');
+                res.status(400).send({ error: err });
+            }
+            else {   
+                next();
+            }
+        });
         expressApp.use(express.static('wwwroot', { index: false }));
         expressApp.use('/auth', AuthRoutes.getRoutes());
         expressApp.use((req, res, next) => {
-            res.status(404).send('Requested route not found');
+            res.type('appplication.json');
+            res.status(404).send({ error: 'Requested route not found' });
         });
 
         this.httpServer = https.createServer({
             key: fs.readFileSync('./tls/demo-project.key'),
             cert: fs.readFileSync('./tls/demo-project.cert')
         }, expressApp);
-        //todo: if server cannot bind to port
+        //TODO: if server cannot bind to port
         // this.httpServer.on('error', (err) => {
         //     if (err.name == 'EADDRINUSE' ) {
         //     }
