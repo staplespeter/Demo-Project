@@ -21,6 +21,8 @@ describe("Recordset tests", () => {
         expect(userRs.fieldCount).toEqual(2);
         expect(count).toEqual(4);
         expect(userRs.recordCount).toEqual(4);
+        expect(userRs.getRecord(-1)).toEqual(null);
+        expect(userRs.getRecord(4)).toEqual(null);
         expect(userRs.currentRecord).toEqual(userRs.getRecord(0));
         expect(userRs.currentRecord.getField('TestField1').value).toEqual('TestField1Value1');
         expect(userRs.currentRecord.getField('TestField2').value).toEqual('TestField2Value1');
@@ -28,10 +30,33 @@ describe("Recordset tests", () => {
         expect(userRs.currentRecord.getField('TestField1').fieldDef.isPrimaryKey).toEqual(true);
         expect(userRs.currentRecord.getField('TestField2').fieldDef.name).toEqual('TestField2');
         expect(userRs.currentRecord.getField('TestField2').fieldDef.isPrimaryKey).toEqual(false);
+        expect(userRs.bof).toEqual(false);
+        expect(userRs.eof).toEqual(false);
+
+        let record = userRs.prev();
+        expect(userRs.recordCount).toEqual(4);
+        expect(record).toEqual(null);
+        expect(userRs.currentRecord).toEqual(null);
         expect(userRs.bof).toEqual(true);
         expect(userRs.eof).toEqual(false);
 
-        let record = userRs.next();
+        record = userRs.prev();
+        expect(userRs.recordCount).toEqual(4);
+        expect(record).toEqual(null);
+        expect(userRs.currentRecord).toEqual(null);
+        expect(userRs.bof).toEqual(true);
+        expect(userRs.eof).toEqual(false);
+
+        record = userRs.first();
+        expect(userRs.recordCount).toEqual(4);
+        expect(record).toEqual(userRs.currentRecord);
+        expect(userRs.currentRecord).toEqual(userRs.getRecord(0));
+        expect(userRs.currentRecord.getField('TestField1').value).toEqual('TestField1Value1');
+        expect(userRs.currentRecord.getField('TestField2').value).toEqual('TestField2Value1');
+        expect(userRs.bof).toEqual(false);
+        expect(userRs.eof).toEqual(false);
+
+        record = userRs.next();
         expect(userRs.recordCount).toEqual(4);
         expect(record).toEqual(userRs.currentRecord);
         expect(userRs.currentRecord).toEqual(userRs.getRecord(1));
@@ -47,7 +72,30 @@ describe("Recordset tests", () => {
         expect(userRs.currentRecord.getField('TestField1').value).toEqual('TestField1Value4');
         expect(userRs.currentRecord.getField('TestField2').value).toEqual('TestField2Value4');
         expect(userRs.bof).toEqual(false);
+        expect(userRs.eof).toEqual(false);
+
+        record = userRs.next();
+        expect(userRs.recordCount).toEqual(4);
+        expect(record).toEqual(null);
+        expect(userRs.currentRecord).toEqual(null);
+        expect(userRs.bof).toEqual(false);
         expect(userRs.eof).toEqual(true);
+
+        record = userRs.next();
+        expect(userRs.recordCount).toEqual(4);
+        expect(record).toEqual(null);
+        expect(userRs.currentRecord).toEqual(null);
+        expect(userRs.bof).toEqual(false);
+        expect(userRs.eof).toEqual(true);
+
+        record = userRs.last();
+        expect(userRs.recordCount).toEqual(4);
+        expect(record).toEqual(userRs.currentRecord);
+        expect(userRs.currentRecord).toEqual(userRs.getRecord(3));
+        expect(userRs.currentRecord.getField('TestField1').value).toEqual('TestField1Value4');
+        expect(userRs.currentRecord.getField('TestField2').value).toEqual('TestField2Value4');
+        expect(userRs.bof).toEqual(false);
+        expect(userRs.eof).toEqual(false);
 
         record = userRs.prev();
         expect(userRs.recordCount).toEqual(4);
@@ -64,7 +112,7 @@ describe("Recordset tests", () => {
         expect(userRs.currentRecord).toEqual(userRs.getRecord(0));
         expect(userRs.currentRecord.getField('TestField1').value).toEqual('TestField1Value1');
         expect(userRs.currentRecord.getField('TestField2').value).toEqual('TestField2Value1');
-        expect(userRs.bof).toEqual(true);
+        expect(userRs.bof).toEqual(false);
         expect(userRs.eof).toEqual(false);
     });
 
@@ -83,36 +131,64 @@ describe("Recordset tests", () => {
         expect(userRs.currentRecord).toEqual(userRs.getRecord(0));
         expect(userRs.getRecord(-1)).toEqual(null);
         expect(userRs.getRecord(1)).toEqual(null);
-        expect(userRs.bof).toEqual(true);
-        expect(userRs.eof).toEqual(true);
+        expect(userRs.bof).toEqual(false);
+        expect(userRs.eof).toEqual(false);
 
-        let record = userRs.next();
+        let record = userRs.prev();
+        expect(userRs.recordCount).toEqual(1);
+        expect(record).toEqual(null);
+        expect(userRs.currentRecord).toEqual(null);
+        expect(userRs.bof).toEqual(true);
+        expect(userRs.eof).toEqual(false);
+
+        record = userRs.next();
         expect(userRs.recordCount).toEqual(1);
         expect(record).toEqual(userRs.currentRecord);
         expect(userRs.currentRecord).toEqual(userRs.getRecord(0));
-        expect(userRs.bof).toEqual(true);
-        expect(userRs.eof).toEqual(true);
+        expect(userRs.bof).toEqual(false);
+        expect(userRs.eof).toEqual(false);
 
-        record = userRs.last();
+        record = userRs.prev();
+        expect(userRs.recordCount).toEqual(1);
+        expect(record).toEqual(null);
+        expect(userRs.currentRecord).toEqual(null);
+        expect(userRs.bof).toEqual(true);
+        expect(userRs.eof).toEqual(false);
+
+        record = userRs.first();
         expect(userRs.recordCount).toEqual(1);
         expect(record).toEqual(userRs.currentRecord);
         expect(userRs.currentRecord).toEqual(userRs.getRecord(0));
-        expect(userRs.bof).toEqual(true);
+        expect(userRs.bof).toEqual(false);
+        expect(userRs.eof).toEqual(false);
+
+        record = userRs.next();
+        expect(userRs.recordCount).toEqual(1);
+        expect(record).toEqual(null);
+        expect(userRs.currentRecord).toEqual(null);
+        expect(userRs.bof).toEqual(false);
         expect(userRs.eof).toEqual(true);
 
         record = userRs.prev();
         expect(userRs.recordCount).toEqual(1);
         expect(record).toEqual(userRs.currentRecord);
         expect(userRs.currentRecord).toEqual(userRs.getRecord(0));
-        expect(userRs.bof).toEqual(true);
+        expect(userRs.bof).toEqual(false);
+        expect(userRs.eof).toEqual(false);
+
+        record = userRs.next();
+        expect(userRs.recordCount).toEqual(1);
+        expect(record).toEqual(null);
+        expect(userRs.currentRecord).toEqual(null);
+        expect(userRs.bof).toEqual(false);
         expect(userRs.eof).toEqual(true);
 
-        record = userRs.first();
+        record = userRs.last();
         expect(userRs.recordCount).toEqual(1);
         expect(record).toEqual(userRs.currentRecord);
         expect(userRs.currentRecord).toEqual(userRs.getRecord(0));
-        expect(userRs.bof).toEqual(true);
-        expect(userRs.eof).toEqual(true);
+        expect(userRs.bof).toEqual(false);
+        expect(userRs.eof).toEqual(false);
     });
 
     it("can load a dataset with no rows and navigate", async () => {
@@ -123,40 +199,40 @@ describe("Recordset tests", () => {
         expect(userRs.recordCount).toEqual(0);
         expect(userRs.currentRecord).toEqual(null);
         expect(userRs.getRecord(0)).toEqual(null);
-        expect(userRs.bof).toEqual(false);
-        expect(userRs.eof).toEqual(false);
+        expect(userRs.bof).toEqual(true);
+        expect(userRs.eof).toEqual(true);
 
-        let record = userRs.next();
+        let record = userRs.prev();
         expect(userRs.recordCount).toEqual(0);
         expect(record).toEqual(null);
         expect(userRs.currentRecord).toEqual(null);
         expect(userRs.getRecord(0)).toEqual(null);
-        expect(userRs.bof).toEqual(false);
-        expect(userRs.eof).toEqual(false);
-
-        record = userRs.last();
-        expect(userRs.recordCount).toEqual(0);
-        expect(record).toEqual(null);
-        expect(userRs.currentRecord).toEqual(null);
-        expect(userRs.getRecord(0)).toEqual(null);
-        expect(userRs.bof).toEqual(false);
-        expect(userRs.eof).toEqual(false);
-
-        record = userRs.prev();
-        expect(userRs.recordCount).toEqual(0);
-        expect(record).toEqual(null);
-        expect(userRs.currentRecord).toEqual(null);
-        expect(userRs.getRecord(0)).toEqual(null);
-        expect(userRs.bof).toEqual(false);
-        expect(userRs.eof).toEqual(false);
+        expect(userRs.bof).toEqual(true);
+        expect(userRs.eof).toEqual(true);
 
         record = userRs.first();
         expect(userRs.recordCount).toEqual(0);
         expect(record).toEqual(null);
         expect(userRs.currentRecord).toEqual(null);
         expect(userRs.getRecord(0)).toEqual(null);
-        expect(userRs.bof).toEqual(false);
-        expect(userRs.eof).toEqual(false);
+        expect(userRs.bof).toEqual(true);
+        expect(userRs.eof).toEqual(true);
+
+        record = userRs.next();
+        expect(userRs.recordCount).toEqual(0);
+        expect(record).toEqual(null);
+        expect(userRs.currentRecord).toEqual(null);
+        expect(userRs.getRecord(0)).toEqual(null);
+        expect(userRs.bof).toEqual(true);
+        expect(userRs.eof).toEqual(true);
+
+        record = userRs.last();
+        expect(userRs.recordCount).toEqual(0);
+        expect(record).toEqual(null);
+        expect(userRs.currentRecord).toEqual(null);
+        expect(userRs.getRecord(0)).toEqual(null);
+        expect(userRs.bof).toEqual(true);
+        expect(userRs.eof).toEqual(true);
     });
 
     it("can update rows in the dataset", async () => {
@@ -181,6 +257,8 @@ describe("Recordset tests", () => {
         let record1 = userRs.addRecord();
         record1.getField('TestField2').value = 'NewTestField2Value1';
         expect(userRs.currentRecord).toEqual(record1);
+        expect(userRs.bof).toEqual(false);
+        expect(userRs.eof).toEqual(false);
         expect(record1.hasChanged).toEqual(false);
         expect(record1.isNew).toEqual(true);
 
@@ -189,6 +267,8 @@ describe("Recordset tests", () => {
         fieldData.set('TestField2', 'NewTestField2Value5');
         let record2 = userRs.addRecord(fieldData);
         expect(userRs.currentRecord).toEqual(record2);
+        expect(userRs.bof).toEqual(false);
+        expect(userRs.eof).toEqual(false);
         expect(record2.hasChanged).toEqual(false);
         expect(record2.isNew).toEqual(true);
         

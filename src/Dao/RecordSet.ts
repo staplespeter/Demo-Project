@@ -33,7 +33,7 @@ export default class Recordset implements IRecordset {
         return this._bof;
     }
 
-    private _eof: boolean = false;
+    private _eof: boolean = true;
     get eof(): boolean {
         return this._eof;
     }
@@ -47,16 +47,16 @@ export default class Recordset implements IRecordset {
         this._currentRecordIndex = null;
         this._currentRecord = null;
         this._records = new Array();
-        this._bof = false;
-        this._eof = false;
+        this._bof = true;
+        this._eof = true;
 
         this._records = await this._datasource.load(fields, filter, maxRows);
         
         if (this._records.length > 0) {
             this._currentRecordIndex = 0;
             this._currentRecord = this._records[this._currentRecordIndex];
-            this._bof = true;
-            this._eof = this._currentRecordIndex == this._records.length - 1;
+            this._bof = false;
+            this._eof = false;
         }
 
         return this.recordCount;
@@ -86,74 +86,78 @@ export default class Recordset implements IRecordset {
         let record = new Record(this._datasource.fieldDefs, values, true);
         this._records.push(record);
         this._currentRecord = record;
+        this._currentRecordIndex = this._records.length - 1;
+        this._bof = false;
+        this._eof = false;
         return record;
     }
+
+    //TODO: delete()
     
     prev(): IRecord {
-        if (this._currentRecordIndex == null) {
+        if (this._bof) {
             return null;
         }
-        if (this._bof) {
-            return this._currentRecord;
+        if (this._eof) {
+            return this.last();
         }
 
         if (this._currentRecordIndex > 0) {
             this._currentRecordIndex--;
             this._currentRecord = this._records[this._currentRecordIndex];
         }
-        this._bof = this._currentRecordIndex == 0;
-        this._eof = this._currentRecordIndex == this._records.length - 1;
+        else if (this._currentRecordIndex == 0) {
+            this._bof = true;
+            this._currentRecordIndex = null;
+            this._currentRecord = null;
+        }
 
         return this._currentRecord;
     }
 
     first(): IRecord {
-        if (this._currentRecordIndex == null) {
+        if (this._records.length == 0) {
             return null;
-        }
-        if (this._bof) {
-            return this._currentRecord;
         }
 
         this._currentRecordIndex = 0;
         this._currentRecord = this._records[this._currentRecordIndex];
-        this._bof = true;
-        this._eof = this._currentRecordIndex == this._records.length - 1;
+        this._bof = false;
+        this._eof = false;
 
         return this._currentRecord;
     }
 
     next(): IRecord {
-        if (this._currentRecordIndex == null) {
-            return null;
+        if (this._eof) {
+            return this._currentRecord;
         }
-        if (!this._eof) {
-            if (this._currentRecordIndex < this._records.length - 1) {
-                this._currentRecordIndex++;
-                this._currentRecord = this._records[this._currentRecordIndex];
-            }
-            this._bof = this._currentRecordIndex == 0;
-            if (this._currentRecordIndex == this._records.length - 1)
-            {
-                this._eof = true;
-            }
+        if (this._bof) {
+            return this.first();
         }
-
+        
+        if (this._currentRecordIndex < this._records.length - 1) {
+            this._currentRecordIndex++;
+            this._currentRecord = this._records[this._currentRecordIndex];
+        }
+        else if (this._currentRecordIndex == this._records.length - 1) {
+            this._eof = true;
+            this._currentRecordIndex = null;
+            this._currentRecord = null;
+        }
+        
         return this._currentRecord;
     }
 
     last(): IRecord {
-        if (this._currentRecordIndex == null) {
+        if (this._records.length == 0) {
             return null;
-        }
-        if (this._eof) {
-            return this._currentRecord;
         }
 
         this._currentRecordIndex = this._records.length - 1;
         this._currentRecord = this._records[this._currentRecordIndex];
-        this._bof = this._currentRecordIndex == 0;
-        this._eof = true;
+        this._bof = false;
+        this._eof = false;
 
         return this._currentRecord;
     }
