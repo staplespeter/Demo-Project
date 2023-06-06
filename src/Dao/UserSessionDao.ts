@@ -4,12 +4,14 @@ import DaoFactory from "./DaoFactory";
 import { toMySqlDateTimeGmt } from "./MySql/MySqlDateHelper";
 
 export default class UserSessionDao extends Dao<UserSession> {
+    protected readonly _fields: string[] = ['Id', 'StartDate', 'EndDate', 'UserId'];
+
     async load(userId: number): Promise<UserSession> {
         if (!this._rs) {
             //todo: move 'MySQL' to a config options file and expose as system level variable.
             this._rs = await DaoFactory.getRecordSet('MySQL', 'UserSession');
         }
-        await this._rs.load(['Id', 'StartDate', 'EndDate', 'UserId'], `'UserId' == ${userId} AND 'EndDate IS NULL`);
+        await this._rs.load(this._fields, `UserId = ${userId} AND EndDate IS NULL`);
         if (this._rs.recordCount == 0) {
             return null;
         }
@@ -23,7 +25,7 @@ export default class UserSessionDao extends Dao<UserSession> {
             us.startDate = this._rs.currentRecord.getField('StartDate').value ?
                 new Date(this._rs.currentRecord.getField('StartDate').value) :
                 null;
-            us.endDate = this._rs.currentRecord.getField('EndDate').value?
+            us.endDate = this._rs.currentRecord.getField('EndDate').value ?
                 new Date(this._rs.currentRecord.getField('EndDate').value) :
                 null;
             us.userId = this._rs.currentRecord.getField('UserId').value;
@@ -35,9 +37,7 @@ export default class UserSessionDao extends Dao<UserSession> {
         if (!this._rs) {
             this._rs = await DaoFactory.getRecordSet('MySQL', 'UserSession');
         }
-        if (this._rs.recordCount == 0) {
-            this._rs.addRecord();
-        }
+        this._rs.addRecord();
         this._rs.currentRecord.getField('Id').value = o.id;
         this._rs.currentRecord.getField('StartDate').value = toMySqlDateTimeGmt(o.startDate) ?? null;
         this._rs.currentRecord.getField('EndDate').value = toMySqlDateTimeGmt(o.endDate) ?? null;

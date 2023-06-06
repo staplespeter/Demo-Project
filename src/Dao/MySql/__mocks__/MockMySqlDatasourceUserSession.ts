@@ -46,7 +46,7 @@ const mockLoadResult = [
 ];
 const mockLoadFn = async function (fields: Array<string> = null, filter: string = null, maxRows: number = 100) {
     const flds= fields;
-    const userId = filter.substring("'UserId' == ".length, filter.length - " AND 'EndDate IS NULL".length);
+    const userId = filter.substring("'UserId' = ".length, filter.length - " AND 'EndDate IS NULL".length);
 
     return mockLoadResult.filter(r => r.getField('UserId').value == userId);
 }

@@ -1,4 +1,4 @@
-const mysqlx = require('@mysql/xdevapi');
+import mysqlx from '@mysql/xdevapi';
 import FieldDef from "../../FieldDef";
 import Record from "../../Record";
 import IFieldDef from "../../IFieldDef";

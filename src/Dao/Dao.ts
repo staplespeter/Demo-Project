@@ -3,6 +3,7 @@ import IRecordset from "./IRecordset";
 import Recordset from "./RecordSet";
 
 export default abstract class Dao<T> implements IDao<T> {
+    protected abstract readonly _fields: string[];
     protected _rs: IRecordset = null;
 
     constructor();
