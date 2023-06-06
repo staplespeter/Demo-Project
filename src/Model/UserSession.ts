@@ -3,7 +3,6 @@ import UserSessionDao from '../Dao/UserSessionDao';
 import { add } from 'date-fns';
 
 
-//todo: remove Token field from DDL
 export default class UserSession extends DataObject {
     //session period in minutes
     static readonly DEFAULT_SESSION_PERIOD = 60*12;
