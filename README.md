@@ -9,7 +9,9 @@ Current work being done on feature/DP-1 branch.  Pull this.
 
 To run use:
 >npm run build
+
 >npm run server
+
 >npm run client (in a separate console)
 
 Please note there is no direct client-server communication yet.
