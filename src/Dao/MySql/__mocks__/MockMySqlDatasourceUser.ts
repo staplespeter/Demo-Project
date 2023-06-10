@@ -49,8 +49,7 @@ const mockLoadResult = [
             .set('DateRegistered', '2001-01-03 12:34:56'))
 ];
 const mockLoadFn = async function (fields: Array<string> = null, filter: string = null, maxRows: number = 100) {
-    const flds= fields;
-    const email = filter.substring("'Email' = \"".length, filter.length - 1);
+    const email = filter.substring("Email = \"".length, filter.length - 1);
 
     return mockLoadResult.filter(r => r.getField('Email').value == email);
 }

@@ -6,7 +6,7 @@ import MySqlDatasource from "../MySqlDatasource";
 jest.mock("../MySqlDatasource");
 
 //even though property getters are documented in Jest they do not work @28.1.3.
-//fixed
+//fixed - but i'm pretty sure the changes were never merged to master! :(
 export const mockGetObjectName = jest
     .spyOn(MySqlDatasource.prototype, 'objectName', 'get')
     .mockReturnValue('UserSession');
@@ -24,36 +24,64 @@ export const mockGetFieldDefs = jest
 MySqlDatasource.fieldDefs.set('UserSession', mockFieldDefs);
 
 
-const mockLoadResult = [
+const mockLoadResult1 = [
     new Record(mockFieldDefs,
         new Map<string, any>()
             .set('Id', 1)
-            .set('StartDate', '2001-01-01 12:34:56')
+            .set('StartDate', '2001-01-01 12:34:56.000')
             .set('EndDate', null)
             .set('UserId', 101)),
     new Record(mockFieldDefs,
         new Map<string, any>()
-            .set('Id', 3)
-            .set('StartDate', '2001-01-03 12:34:56')
+            .set('Id', 2)
+            .set('StartDate', '2001-01-03 12:34:56.000')
             .set('EndDate', null)
             .set('UserId', 103)),
     new Record(mockFieldDefs,
         new Map<string, any>()
             .set('Id', 3)
-            .set('StartDate', '2001-01-03 12:34:56')
+            .set('StartDate', '2001-01-03 12:34:56.000')
             .set('EndDate', null)
-            .set('UserId', 103))
+            .set('UserId', 103)),
+    new Record(mockFieldDefs,
+        new Map<string, any>()
+            .set('Id', 5)
+            .set('StartDate', '2001-01-05 12:34:56.000')
+            .set('EndDate', '2001-02-05 12:34:56.000')
+            .set('UserId', 105))
 ];
-const mockLoadFn = async function (fields: Array<string> = null, filter: string = null, maxRows: number = 100) {
-    const flds= fields;
-    const userId = filter.substring("'UserId' = ".length, filter.length - " AND 'EndDate IS NULL".length);
 
-    return mockLoadResult.filter(r => r.getField('UserId').value == userId);
+const mockLoadResult2 = [
+    new Record(mockFieldDefs,
+        new Map<string, any>()
+            .set('Id', 6)
+            .set('StartDate', '2001-01-06 12:34:56.000')
+            .set('EndDate', null)
+            .set('UserId', 106))
+];
+
+const mockLoadFn = async function (fields: Array<string> = null, filter: string = null, maxRows: number = 100) {
+    const id = filter.substring("Id = ".length, "Id = ".length + 1);
+    console.log(id);
+    const activeOnly = filter.substring("Id = ".length + 1) == ' AND EndDate IS NULL';
+
+    if (id == '6') {
+        return mockLoadResult2;
+    }
+    return mockLoadResult1.filter(r => r.getField('Id').value == id && (activeOnly ? r.getField('EndDate').value === null : true));
+}
+const mockLoadForUserFn = async function (fields: Array<string> = null, filter: string = null, maxRows: number = 100) {
+    const userId = filter.substring("UserId = ".length, filter.length - " AND EndDate IS NULL".length);
+
+    return mockLoadResult1.filter(r => r.getField('UserId').value == userId);
 }
 export const mockLoad = jest
     .spyOn(MySqlDatasource.prototype, 'load')
     .mockImplementation((fields: Array<string> = null, filter: string = null, maxRows: number = 100) => {
-        return mockLoadFn(fields, filter, maxRows);
+        if (filter.startsWith('Id')) {
+            return mockLoadFn(fields, filter, maxRows);
+        }
+        return mockLoadForUserFn(fields, filter, maxRows);
     });
 
 const mockSaveFn = async function (records: Array<IRecord>) {

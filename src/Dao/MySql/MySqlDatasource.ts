@@ -138,7 +138,7 @@ export default class MySqlDatasource extends Datasource {
         const recordsToUpdate = records.filter(r => (r.primaryKeyField.value ?? null) !== null);
         const recordsToInsert = records.filter(r => (r.primaryKeyField.value ?? null) === null);
         if (recordsToUpdate.length + recordsToInsert.length == 0) {
-            return;
+            return 0;
         }
 
         try {

@@ -25,7 +25,7 @@ export default class AuthController implements IAuthApi {
                     const token = new Jwt({
                         userSessionId: userSession.id,
                         sessionEndDate: userSession.calculateEndDate()
-                    })
+                    });
                     await token.generate();
                     result.token = token.value;
                 }
@@ -76,7 +76,7 @@ export default class AuthController implements IAuthApi {
     }
 
     static async authenticate(tokenValue: string): Promise<AuthResult> {
-        //todo: log out feature must update/return token with session end (current) date
+        //todo: log out feature must update/return token with session end (current) date.
         const result = new AuthResult();
 
         try {
@@ -86,6 +86,13 @@ export default class AuthController implements IAuthApi {
                 result.error = 'Authorisation token is not valid';
             }
             else if (token.hasExpired) {
+                const us = await UserSession.load(token.data.userSessionId);
+                if (us === null) {
+                    console.log(`Unable to find session with Id ${token.data.userSessionId}`);
+                }
+                else {
+                    await us.endSession(token.data.sessionEndDate);
+                }
                 result.redirectUrl = AuthController.LOGIN_URL;
             }
             else {

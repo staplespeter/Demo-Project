@@ -16,8 +16,6 @@ export default class UserSession extends DataObject {
     static async startSession(userId: number, startDate?: Date): Promise<UserSession> {
         const dao = new UserSessionDao();
         const us = new UserSession(dao);
-        //todo: end existing session if user unnecessarily logging in
-        //await dao.endExisting(userId);
         await us.startSession(userId, startDate);
         return us;
     }
@@ -35,13 +33,15 @@ export default class UserSession extends DataObject {
     async startSession(userId: number): Promise<void>;
     async startSession(userId: number, startDate: Date): Promise<void>;
     async startSession(userId: number, startDate?: Date) {
-        if (!startDate) {
-            startDate = new Date();
-        }
+        await (this._dao as UserSessionDao).endExisting(userId);
 
+        //TODO: Node does not use the local for generating date times.
+        //  this results in the time being UTC+0 for the User.DateRegistered field (set by DB).
+        //  MySQL uses the local so UserSession date fields have UTC+1 i.e. British Summer Time.
+        //  Update the settings for MySQL to use UTC+0?
         if (!this.startDate) {
             this.userId = userId;
-            this.startDate = startDate;
+            this.startDate = startDate ?? new Date();
             await this._dao.save(this);
         }
     }
@@ -49,12 +49,8 @@ export default class UserSession extends DataObject {
     async endSession(): Promise<void>;
     async endSession(endDate: Date): Promise<void>;
     async endSession(endDate?: Date) {
-        if (!endDate) {
-            endDate = new Date();
-        }
-
         if (this.id && this.startDate && !this.endDate) {
-            this.endDate = endDate;
+            this.endDate = endDate ?? new Date();
             await this._dao.save(this);
         }
     }

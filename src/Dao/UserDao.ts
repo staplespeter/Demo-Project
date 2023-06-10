@@ -4,14 +4,14 @@ import Dao from './Dao';
 import { toMySqlDateTimeGmt } from './MySql/MySqlDateHelper'
 
 export default class UserDao extends Dao<User> {
-    protected readonly _fields: string[] = ['Id', 'Email', 'PasswordHash', 'PasswordSalt', 'DateRegistered'];
+    public readonly fields: string[] = ['Id', 'Email', 'PasswordHash', 'PasswordSalt', 'DateRegistered'];
 
     async load(email: string): Promise<User> {
         if (!this._rs) {
             this._rs = await DaoFactory.getRecordSet('MySQL', 'User');
         }
 
-        await this._rs.load(this._fields, `Email = "${email}"`);
+        await this._rs.load(this.fields, `Email = "${email}"`);
         if (this._rs.recordCount == 0) {
             return null;
         }
