@@ -53,20 +53,20 @@ export default function SignIn(props: propsType) {
             Sign In
             <hr></hr>
             <div>
-                Username: <input type="email" id="SignInUsername" ref={emailRef}></input>
+                Username: <input type="email" id="SignIn_Username" ref={emailRef}></input>
             </div>
             <div>
-                Password: <input type="password" id="SignInPassword1" ref={password1Ref}></input>
+                Password: <input type="password" id="SignIn_Password1" ref={password1Ref}></input>
             </div>
             {signInMode ?
                 <div></div> :
                 <div>
-                    Password: <input type="password" id="SignInPassword2" ref={password2Ref}></input>
+                    Password: <input type="password" id="SignIn_Password2" ref={password2Ref}></input>
                 </div>
             }                
             <div>
-                <input type="button" value="Sign In" onClick={handleSignInClick} readOnly></input>
-                <input type="Button" value="Sign Up" onClick={handleSignUpClick} readOnly></input>
+                <input type="button" id="SignIn_SignIn" value="Sign In" onClick={handleSignInClick} readOnly></input>
+                <input type="button" id="SignIn_SignUp" value="Sign Up" onClick={handleSignUpClick} readOnly></input>
             </div>
             {!errorMessage ?
                 <div></div> :
