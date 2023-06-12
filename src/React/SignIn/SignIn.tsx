@@ -1,93 +1,79 @@
-import React, { PropsWithChildren, SyntheticEvent } from "react";
+import React, { useState, useRef } from "react";
 import IClientAuthentication from "../../Client/IClientAuthentication";
 
-type Props = {
-    auth: IClientAuthentication
-};
 
-type State = {
-    signIn: boolean;
-    errorMessage: string;
-};
+type propsType = {
+     auth: IClientAuthentication
+}
 
-export default class SignIn extends React.Component<PropsWithChildren<Props>, State> {
-    private emailRef: React.RefObject<HTMLInputElement> = React.createRef();
-    private password1Ref: React.RefObject<HTMLInputElement> = React.createRef();
-    private password2Ref: React.RefObject<HTMLInputElement> = React.createRef();
-    private errorMessageRef: React.RefObject<HTMLDivElement> = React.createRef();
-    
+export default function SignIn(props: propsType) {
+    const emailRef = useRef(null);
+    const password1Ref = useRef(null);
+    const password2Ref = useRef(null);
+    const errorMessageRef = useRef(null);
+    const [signInMode, setSignInMode] = useState(true);
+    const [errorMessage, setErrorMessage] = useState(null);
 
-    constructor(props: Props) {
-        super(props);
-        this.handleSignInClick = this.handleSignInClick.bind(this);
-        this.handleSignUpClick = this.handleSignUpClick.bind(this);
-        this.state = {
-            signIn: true,
-            errorMessage: null
-        };
-    }
 
-    async handleSignInClick() {
-        if (this.state.signIn) {
-            if (await this.props.auth.signIn(this.emailRef.current.value, this.password1Ref.current.value)) {
-                this.setState({ errorMessage: null });
+    async function handleSignInClick() {
+        if (signInMode) {
+            if (await props.auth.signIn(emailRef.current.value, password1Ref.current.value)) {
+                setErrorMessage(null);
             }
             else {
-                this.setState({ errorMessage: 'Error signing in: ' + this.props.auth.lastError });
+                setErrorMessage('Error signing in: ' + props.auth.lastError);
             }
         }
         else {
-            this.setState({ signIn: true });
+            setSignInMode(true);
         }
     }
 
-    async handleSignUpClick(){
-        if (this.state.signIn) {
-            this.setState({ signIn: false });
+    async function handleSignUpClick(){
+        if (signInMode) {
+            setSignInMode(false);
         }
         else {
-            if (this.password1Ref.current.value != this.password2Ref.current.value) {
-                this.setState({ errorMessage: 'Passwords do not match'});
+            if (password1Ref.current.value != password2Ref.current.value) {
+                setErrorMessage('Passwords do not match');
                 return;
             }
 
-            if (await this.props.auth.signUp(this.emailRef.current.value, this.password1Ref.current.value)) {
-                this.setState({ errorMessage: null });
+            if (await props.auth.signUp(emailRef.current.value, password1Ref.current.value)) {
+                setErrorMessage(null);
             }
             else {
-                this.setState({ errorMessage: 'Error signing up: ' + this.props.auth.lastError });
+                setErrorMessage('Error signing up: ' + props.auth.lastError);
             }
         }
     }
     
-    render() {
-        return (
-            <div className="SignIn">
-                Sign In
-                <hr></hr>
-                <div>
-                    Username: <input type="email" id="SignInUsername" ref={this.emailRef}></input>
-                </div>
-                <div>
-                    Password: <input type="password" id="SignInPassword1" ref={this.password1Ref}></input>
-                </div>
-                {this.state.signIn ?
-                    <div></div> :
-                    <div>
-                        Password: <input type="password" id="SignInPassword2" ref={this.password2Ref}></input>
-                    </div>
-                }                
-                <div>
-                    <input type="button" value="Sign In" onClick={this.handleSignInClick} readOnly></input>
-                    <input type="Button" value="Sign Up" onClick={this.handleSignUpClick} readOnly></input>
-                </div>
-                {!this.state.errorMessage ?
-                    <div></div> :
-                    <div id="errorMessage" ref={this.errorMessageRef}>
-                        {this.state.errorMessage}
-                    </div>
-                }
+    return (
+        <div className="SignIn">
+            Sign In
+            <hr></hr>
+            <div>
+                Username: <input type="email" id="SignInUsername" ref={emailRef}></input>
             </div>
-        );
-    }
+            <div>
+                Password: <input type="password" id="SignInPassword1" ref={password1Ref}></input>
+            </div>
+            {signInMode ?
+                <div></div> :
+                <div>
+                    Password: <input type="password" id="SignInPassword2" ref={password2Ref}></input>
+                </div>
+            }                
+            <div>
+                <input type="button" value="Sign In" onClick={handleSignInClick} readOnly></input>
+                <input type="Button" value="Sign Up" onClick={handleSignUpClick} readOnly></input>
+            </div>
+            {!errorMessage ?
+                <div></div> :
+                <div id="errorMessage" ref={errorMessageRef}>
+                    {errorMessage}
+                </div>
+            }
+        </div>
+    );
 }
