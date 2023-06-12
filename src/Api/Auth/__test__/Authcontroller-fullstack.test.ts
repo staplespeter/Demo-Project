@@ -2,14 +2,13 @@ import mysqlx from '@mysql/xdevapi';
 import AuthController from "../AuthController";
 import { mysqlxTestConfig } from "../../../Dao/__test__/appdata";
 
-describe('AuthController full stack tests', () =>{
+describe('AuthController full stack tests', () => {
     let session: any = null;
     let userTable: any = null;
 
     beforeAll(async () => {
         session = await mysqlx.getSession(mysqlxTestConfig);
-        userTable = session.getDefaultSchema().getTable('User');
-        
+        userTable = session.getDefaultSchema().getTable('User');        
     });
 
     afterAll(async () => {

@@ -2,11 +2,38 @@
 //I can sign up and sign in
 //So I can administer my account
 
-import page from './pagemodels/SignIn'
+import page from './pagemodels/SignIn';
+import { getFromLocalStorage, clearLocalStorage } from './helpers/ClientFunctions';
+import ClientAuthentication from '../../src/Client/ClientAuthentication';
+import * as mysqlx from '@mysql/xdevapi';
+//TODO: Need to have settings based on build config: -debug runs against test DB as NODE ENV = 'test'
+//  but normal node execution runs against non-test DB.
+import { mysqlxConfig } from "../../src/Dao/appdata";
 
+
+let session: any = null;
+let userTable: any = null;
 
 fixture('', ).page('./signIn.htm')
+    .before(async () => {
+        session = await mysqlx.getSession(mysqlxConfig);
+        userTable = session.getDefaultSchema().getTable('User');      
+    })
+    .after(async () => {
+        if (session) {
+            await (async () => {
+                if (userTable) {
+                    await userTable.delete()
+                        .where("Email LIKE '%test%'")
+                        .execute();
+                }
+            })();
+            await session.close();
+        }
+    })
     .beforeEach(async (t) => {
+        await clearLocalStorage();
+
         await t.expect(page.username.visible).ok()
         .expect(page.password1.visible).ok()
         .expect(page.password2.exists).notOk()
@@ -31,14 +58,18 @@ test('User can sign up', async (t) => {
         .typeText(page.password1, 'testPassword1')
         .typeText(page.password2, 'testPassword1')
         .click(page.signUp);
-        //.expect(?)
+
+    const token = await getFromLocalStorage(ClientAuthentication.TOKEN_STORAGE_KEY) ?? null;
+    await t.expect(token).notEql(null);
 });
 
 test('User can sign in', async (t) => {
     await t.typeText(page.username, 'testUser1')
         .typeText(page.password1, 'testPassword1')
         .click(page.signIn);
-        //.expect(?)
+    
+    const token = await getFromLocalStorage(ClientAuthentication.TOKEN_STORAGE_KEY) ?? null;
+    await t.expect(token).notEql(null);
 });
 
 test('User can toggle between sign up and sign in', async (t) => {

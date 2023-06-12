@@ -1,5 +1,5 @@
 import axios from "axios";
-import https from 'https';
+import * as https from 'https';
 
 export default class AxiosClient {
     //todo: supply the base url in a cookie

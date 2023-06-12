@@ -1,1 +1,2 @@
+//TODO: have the schema be configured from DotEnv based on build configuration and do away with test config file.
 export const mysqlxConfig = { host: 'localhost', port: 33060, user: 'ServerApplication', password: 'ServerApplication', schema: 'DemoProject' };
