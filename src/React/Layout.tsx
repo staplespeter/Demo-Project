@@ -1,18 +1,13 @@
-import React, { PropsWithChildren } from "react";
+import React from "react";
 
 type Props = {
+    children: React.ReactNode;
 };
 
-export default class Layout extends React.Component<PropsWithChildren<Props>> {
-    constructor(props: Props) {
-        super(props);
-    }
-    
-    render() {
-        return (
-            <div className='Layout'>
-                {this.props.children}
-            </div>
-        );
-    }
+export default function Layout(props: Props) {    
+    return (
+        <div className='Layout'>
+            {props.children}
+        </div>
+    );
 }

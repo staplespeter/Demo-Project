@@ -1,19 +1,13 @@
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 
 type Props = {
-    test?: string
+    children: React.ReactNode
 };
 
-export default class Page extends React.Component<PropsWithChildren<Props>> {
-    constructor(props: Props) {
-        super(props);
-    }
-
-    render() {
-        return (
-            <div className='Page'>
-                {this.props.children}
-            </div>
-        );
-    }
+export default function Page(props: Props) {
+    return (
+        <div className='Page'>
+            {props.children}
+        </div>
+    );
 }
