@@ -6,7 +6,7 @@ module.exports = {
     //Snap installed firefox doesn't work with VsCode TestCafe Test Runner to allow in editor debugging :(
     //Using Launch Config https://testcafe.io/documentation/402800/recipes/debugging/visual-studio-code
     browsers: ['path:/usr/bin/brave-browser-stable'], //['path:/snap/firefox/current/usr/lib/firefox/firefox'], //['firefox:userProfile'],
-    baseUrl: 'https://localhost:1234',
+    baseUrl: 'https://localhost:25025',
     //large test timeouts for debugging in browser
     testExecutionTimeout: 600000,
     runExecutionTimeout: 600000,

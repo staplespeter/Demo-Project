@@ -1,11 +1,11 @@
 module.exports = {
   verbose: true,
-  preset: 'ts-jest',
+  preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'node',
   "testMatch": [
     "**/*.steps.js",
     "**/*.test.ts"
   ],
-  modulePathIgnorePatterns: ['/mnt/Data/Repos/Demo-Project/build/'],
-  testTimeout: 20000
+  modulePathIgnorePatterns: ['<rootDir>/build/', '<rootDir>/dist/'],
+  testTimeout: 600000
 };

@@ -4,17 +4,17 @@
 
 import page from './pagemodels/SignIn';
 import { getFromLocalStorage, clearLocalStorage } from './helpers/ClientFunctions';
-import ClientAuthentication from '../../src/Client/ClientAuthentication';
+import ClientAuthentication from '../../src/Client/Model/ClientAuthentication';
 import * as mysqlx from '@mysql/xdevapi';
 //TODO: Need to have settings based on build config: -debug runs against test DB as NODE ENV = 'test'
 //  but normal node execution runs against non-test DB.
-import { mysqlxConfig } from "../../src/Dao/appdata";
+import { mysqlxConfig } from "../../src/Server/Dao/appdata";
 
 
 let session: any = null;
 let userTable: any = null;
 
-fixture('', ).page('./signIn.htm')
+fixture('', ).page('./signIn.html')
     .before(async () => {
         session = await mysqlx.getSession(mysqlxConfig);
         userTable = session.getDefaultSchema().getTable('User');      
