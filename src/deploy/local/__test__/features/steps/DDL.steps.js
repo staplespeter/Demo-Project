@@ -1,10 +1,7 @@
-//import { defineFeature, loadFeature } from "jest-cucumber";
-//import mysqlx from "'../../node_modules/@mysql/xdevapi/index.js';"; 
 const { defineFeature, loadFeature } = require('jest-cucumber');
 const mysqlx = require('@mysql/xdevapi');
 
 const feature = loadFeature("./src/deploy/local/__test__/features/DDL.feature");
-const mysqlxConfig = { host: 'localhost', port: 33060, user: 'TestRunner', password: 'TestRunner', schema: 'DemoProject_test' };
 
 defineFeature(feature, test => {
     var session = null;
@@ -17,7 +14,7 @@ defineFeature(feature, test => {
     });
 
     beforeAll(()=> {
-        return mysqlx.getSession(mysqlxConfig)
+        return mysqlx.getSession(global.jest_mysqlConfig)
             .then(s => {
                 session = s;
                 userTable = session.getDefaultSchema().getTable('User');

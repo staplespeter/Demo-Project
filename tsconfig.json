@@ -23,6 +23,7 @@
   "include": [
     "src/Server/**/*",
     "src/Client/**/*",
-    "src/helpers/*"
+    "src/shared/*",
+    "src/types/*.d.ts"
   ]
 }

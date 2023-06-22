@@ -5,9 +5,9 @@ import UserSession from "../../Model/UserSession";
 import { SignJWT, jwtVerify, JWTVerifyResult } from 'jose';
 
 export default class Jwt implements IToken {
-    private static ALGORITHM = 'HS256';
-    private static ISSUER = 'http://demoprojectserver';
-    private static AUDIENCE = 'demoprojectclient';
+    private static readonly ALGORITHM = 'HS256';
+    private static readonly ISSUER = 'http://demoprojectserver';
+    private static readonly AUDIENCE = 'demoprojectclient';
 
     private static readonly SECRET_KEY = 'DEMO-PROJECT-SECRET-KEY';
     static get secretKey(): Uint8Array {

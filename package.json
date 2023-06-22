@@ -38,7 +38,6 @@
     "testcafe": "^2.6.2",
     "ts-add-js-extension": "^1.4.0",
     "ts-jest": "^28.0.7",
-    "ts-node": "^10.9.1",
     "typescript": "^4.9.5",
     "url": "^0.11.0",
     "util": "^0.12.4",
@@ -46,10 +45,11 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@mysql/xdevapi": "8.0.33",
+    "@mysql/xdevapi": "^8.0.33",
     "axios": "^1.4.0",
     "cors": "^2.8.5",
     "date-fns": "^2.29.2",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "jose": "^4.9.2",
     "react": "^18.2.0",

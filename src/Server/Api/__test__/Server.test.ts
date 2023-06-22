@@ -3,7 +3,6 @@ import axios from 'axios';
 import https from 'https';
 import fs from 'fs';
 jest.mock('../Auth/AuthController');
-jest.mock('../../../shared/helpers');
 
 //TODO: HTTP/2
 const client = axios.create({

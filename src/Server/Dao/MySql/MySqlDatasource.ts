@@ -1,28 +1,31 @@
 import mysqlx from '@mysql/xdevapi';
-import { mysqlxConfig } from "../appdata";
-import { mysqlxTestConfig } from "../__test__/appdata";
 import FieldDef from "../FieldDef";
 import Datasource from "../Datasource";
 import IFieldDef from "../IFieldDef";
 import IRecord from "../IRecord";
-import { DaoType } from "../types";
 import Record from "../Record";
 
 export default class MySqlDatasource extends Datasource {
-    private static mySqlConfig = process.env.NODE_ENV == 'test' ? mysqlxTestConfig : mysqlxConfig;
+    private static readonly MYSQL_CONFIG = {
+        host: process.env.MYSQL_HOST,
+        port: Number(process.env.MYSQL_PORT),
+        user: process.env.MYSQL_SERVERAPP_USER,
+        password: process.env.MYSQL_SERVERAPP_PASSWORD,
+        schema: process.env.MYSQL_SCHEMA
+    }
 
-    static async getFieldDefs(objectName: DaoType): Promise<Array<IFieldDef>> {
+    static async getFieldDefs(objectName: Dao.DaoType): Promise<Array<IFieldDef>> {
         let session: any = null;
 
         try {
-            session = await mysqlx.getSession(MySqlDatasource.mySqlConfig);
+            session = await mysqlx.getSession(MySqlDatasource.MYSQL_CONFIG);
             let results = await session
                 .sql("SELECT COLUMN_NAME, COLUMN_KEY FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA=? AND TABLE_NAME=?")
-                .bind([mysqlxConfig.schema, objectName])
+                .bind([MySqlDatasource.MYSQL_CONFIG.schema, objectName])
                 .execute();
             let fieldsRecord = results.toArray();
             if (fieldsRecord.length == 0) {
-                throw new RangeError(`No column definitions for ${mysqlxConfig.schema}.${objectName}`);
+                throw new RangeError(`No column definitions for ${MySqlDatasource.MYSQL_CONFIG.schema}.${objectName}`);
             }
             let fields = fieldsRecord.flat();
             let localFieldDefs = new Array<IFieldDef>();
@@ -43,10 +46,10 @@ export default class MySqlDatasource extends Datasource {
         }
     }
 
-    constructor(objectName: DaoType) {
+    constructor(objectName: Dao.DaoType) {
         super();
         this._objectName = objectName;
-        this.fieldDefs = MySqlDatasource.fieldDefs.get(objectName as DaoType);
+        this.fieldDefs = MySqlDatasource.fieldDefs.get(objectName as Dao.DaoType);
         if (!this.fieldDefs) {
             throw new ReferenceError(`Field definitions for object ${this._objectName} not found`);
         }
@@ -60,7 +63,7 @@ export default class MySqlDatasource extends Datasource {
             filter = null;
         }
         
-        const sourceFieldDefs = MySqlDatasource.fieldDefs.get(this._objectName as DaoType);
+        const sourceFieldDefs = MySqlDatasource.fieldDefs.get(this._objectName as Dao.DaoType);
         if (!sourceFieldDefs) {
             throw new ReferenceError(`Field definitions for object ${this._objectName} not found`);
         }
@@ -74,7 +77,7 @@ export default class MySqlDatasource extends Datasource {
         try {
             this.fieldDefs = new Array();
 
-            session = await mysqlx.getSession(MySqlDatasource.mySqlConfig);
+            session = await mysqlx.getSession(MySqlDatasource.MYSQL_CONFIG);
             let query = session.getDefaultSchema().getTable(this._objectName);
             query = query.select(fieldNames);
             query = filter ? query.where(filter) : query;
@@ -142,7 +145,7 @@ export default class MySqlDatasource extends Datasource {
         }
 
         try {
-            session = await mysqlx.getSession(MySqlDatasource.mySqlConfig);
+            session = await mysqlx.getSession(MySqlDatasource.MYSQL_CONFIG);
             let table = session.getDefaultSchema().getTable(this.objectName);
             await session.startTransaction();
 

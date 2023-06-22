@@ -1,3 +1,5 @@
+require('dotenv').config({ path: 'config/.env' });
+
 module.exports = {
     src: './test/testcafe/',
     nativeAutomation: false,
@@ -21,6 +23,15 @@ module.exports = {
             "noImplicitAny": true,
             "removeComments": true,
             "preserveConstEnums": true
+        }
+    },
+    userVariables: {
+        mysqlConfig: {
+            host: process.env.MYSQL_HOST,
+            port: Number(process.env.MYSQL_PORT),
+            user: process.env.MYSQL_TEST_USER,
+            password: process.env.MYSQL_TEST_PASSWORD,
+            schema: process.env.MYSQL_SCHEMA
         }
     }
 }

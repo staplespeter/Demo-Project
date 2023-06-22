@@ -5,14 +5,11 @@ import IRecord from "./IRecord";
 import { toMySqlDateTimeGmt } from "./MySql/MySqlDateHelper";
 
 export default class UserSessionDao extends Dao<UserSession> {
-    //TODO: change this to static?
     public readonly fields: string[] = ['Id', 'StartDate', 'EndDate', 'UserId'];
 
     async load(id: number, activeSessionsOnly: boolean = true): Promise<UserSession> {
         if (!this._rs) {
-            //todo: move 'MySQL' to a config options file and expose as system level variable.
-            //  Use https://www.npmjs.com/package/dotenv.
-            this._rs = await DaoFactory.getRecordSet('MySQL', 'UserSession');
+            this._rs = await DaoFactory.getRecordSet(process.env.DBENGINE as Dao.DatasourceType, 'UserSession');
         }
         let where = 'Id = ' + id;
         if (activeSessionsOnly) {
@@ -37,9 +34,7 @@ export default class UserSessionDao extends Dao<UserSession> {
 
     async loadSessionForUser(userId: number): Promise<UserSession> {
         if (!this._rs) {
-            //TODO: move 'MySQL' to a config options file and expose as system level variable.
-            //  Use https://www.npmjs.com/package/dotenv.
-            this._rs = await DaoFactory.getRecordSet('MySQL', 'UserSession');
+            this._rs = await DaoFactory.getRecordSet(process.env.DBENGINE as Dao.DatasourceType, 'UserSession');
         }
         //TODO: implement Orderby in Datasource,
         //  or just reference the one with the highest start date.
@@ -120,8 +115,7 @@ export default class UserSessionDao extends Dao<UserSession> {
 
     async endExisting(userId: number): Promise<boolean> {
         if (!this._rs) {
-            //todo: move 'MySQL' to a config options file and expose as system level variable.
-            this._rs = await DaoFactory.getRecordSet('MySQL', 'UserSession');
+            this._rs = await DaoFactory.getRecordSet(process.env.DBENGINE as Dao.DatasourceType, 'UserSession');
         }
         await this._rs.load(this.fields, `UserId = ${userId} AND EndDate IS NULL`);
         if (this._rs.recordCount == 0) {

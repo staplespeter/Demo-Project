@@ -2,7 +2,6 @@ import mysqlx from '@mysql/xdevapi';
 import FieldDef from "../../FieldDef";
 import Record from "../../Record";
 import IFieldDef from "../../IFieldDef";
-import { mysqlxTestConfig } from "../../__test__/appdata";
 import MySqlDatasource from "../MySqlDatasource";
 
 describe('MySqlData source tests', () => {
@@ -11,7 +10,7 @@ describe('MySqlData source tests', () => {
     let userDatasource: any;
 
     beforeAll(async () => {
-        session = await mysqlx.getSession(mysqlxTestConfig);
+        session = await mysqlx.getSession(global.jest_mysqlConfig);
         userTable = session.getDefaultSchema().getTable('User');
         await userTable.insert( ['Email', 'PasswordHash', 'PasswordSalt'])
             .values(['test1@test.com', 'testhashvaluethatis44charslong1234567890ABCD', 'testsaltvaluethatis44charslong1234567890ABCD'])

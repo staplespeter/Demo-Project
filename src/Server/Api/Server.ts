@@ -2,14 +2,13 @@ import express, { ErrorRequestHandler } from "express";
 import cors from 'cors';
 import https from 'https';
 import fs from 'fs';
-import path from 'path';
 import AuthRoutes from "./Auth/AuthRoutes";
 import helpers from '../../shared/helpers';
 
 export default class Server {
     private httpServer: https.Server;
 
-    static DEFAULT_PORT = 25025;
+    static readonly DEFAULT_PORT = 25025;
 
     constructor() {
         const expressApp = express();
@@ -17,7 +16,6 @@ export default class Server {
         const corsOptions = {
             origin: async function (origin: any, cb: any) {
                 try {
-                    //TODO: setting NODE_ENV and other variables using https://www.npmjs.com/package/dotenv.
                     if (!helpers.isProduction()) {
                         cb(null, true);
                         return;
@@ -122,6 +120,7 @@ export default class Server {
                 }
             }, 500);
         });
+        //todo: check if these promises are being called and correct as required.
         p.then(() => console.log('http server stopped'));
         p.catch((err) => console.log(err));
 

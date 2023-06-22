@@ -3,11 +3,11 @@ import { randomBytes, pbkdf2 } from 'node:crypto';
 import IPassword from './IPassword';
 
 export default class Password implements IPassword {
-    private static GENERATED_PWD_LENGTH = 16;
-    private static PWD_BYTE_LENGTH = 32;
-    private static SALT_BYTE_LENGTH = 32;
-    private static KEYGEN_ITERATIONS = 1000000;
-    private static KEYGEN_DIGEST = 'sha256';
+    private static readonly GENERATED_PWD_LENGTH = 16;
+    private static readonly PWD_BYTE_LENGTH = 32;
+    private static readonly SALT_BYTE_LENGTH = 32;
+    private static readonly KEYGEN_ITERATIONS = 1000000;
+    private static readonly KEYGEN_DIGEST = 'sha256';
 
     readonly text: string;
     private _hash: string;
