@@ -17,11 +17,12 @@ const serverConfig = {
 
 const clientConfig = {
     name: "client",
-    mode: "production",
+    mode: "development",
     target: "web",
+    devtool: "eval-source-map",
     context: path.resolve(__dirname, ''),
     entry: {
-        signin: "./build/Client/React/SignIn/PageInit.js"
+        signin: "./build/Client/React/Pages/SignIn.js"
     },
     output: {
         path: path.resolve(__dirname, 'dist/Client'),

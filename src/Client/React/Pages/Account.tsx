@@ -1,9 +1,9 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import Page from "../Page";
 import ClientAuthentication from "../../Model/ClientAuthentication";
-import Account from "./Account";
-import Layout from "../Layout";
+import Page from "../Components/Page";
+import Account from "../Components/Account";
+import Layout from "../Components/Layout";
 
 const auth = new ClientAuthentication();
 const root = createRoot(document.getElementById('reactRoot'));
