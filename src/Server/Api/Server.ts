@@ -103,7 +103,7 @@ export default class Server {
     }
 
     async stop() {
-        console.log('stopping http server');
+        console.log('\nstopping http server');
 
         let closed = false;
         let iterations = 0;
@@ -120,7 +120,6 @@ export default class Server {
                 }
             }, 500);
         });
-        //todo: check if these promises are being called and correct as required.
         p.then(() => console.log('http server stopped'));
         p.catch((err) => console.log(err));
 
