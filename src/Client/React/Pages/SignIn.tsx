@@ -15,9 +15,10 @@ body.appendChild(reactRoot);
 const root = createRoot(reactRoot);
 root.render(
     <React.StrictMode>
-        <Page>
+        <Page fitToWindow={true}>
             <Layout>
                 <SignIn auth={auth} />
             </Layout>
         </Page>
-    </React.StrictMode>);
+    </React.StrictMode>
+);

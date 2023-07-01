@@ -95,27 +95,29 @@ export default function SignIn(props: propsType) {
             <StyledSignInTitle>Sign In</StyledSignInTitle>
             <StyledHr></StyledHr>
             <StyledTable>
-                <tr>
-                    <td>Username:</td>
-                    <td><StyledInput type="email" id="SignIn_Username" ref={emailRef}></StyledInput></td>
-                </tr>
-                <tr>
-                    <td>Password:</td>
-                    <td><StyledInput type="password" id="SignIn_Password1" ref={password1Ref}></StyledInput></td>
-                </tr>
-                {signInMode ?
-                    <></> :
+                <tbody>
+                    <tr>
+                        <td>Username:</td>
+                        <td><StyledInput type="email" id="SignIn_Username" ref={emailRef}></StyledInput></td>
+                    </tr>
                     <tr>
                         <td>Password:</td>
-                        <td><StyledInput type="password" id="SignIn_Password2" ref={password2Ref}></StyledInput></td>
+                        <td><StyledInput type="password" id="SignIn_Password1" ref={password1Ref}></StyledInput></td>
                     </tr>
-                }    
-                <tr>
-                    <StyledTd colSpan={2}>
-                        <StyledButton id="SignIn_SignIn" onClick={handleSignInClick}>Sign In</StyledButton>
-                        <StyledButton id="SignIn_SignUp" onClick={handleSignUpClick}>Sign Up</StyledButton>
-                    </StyledTd>
-                </tr>
+                    {signInMode ?
+                        <></> :
+                        <tr>
+                            <td>Password:</td>
+                            <td><StyledInput type="password" id="SignIn_Password2" ref={password2Ref}></StyledInput></td>
+                        </tr>
+                    }    
+                    <tr>
+                        <StyledTd colSpan={2}>
+                            <StyledButton id="SignIn_SignIn" onClick={handleSignInClick}>Sign In</StyledButton>
+                            <StyledButton id="SignIn_SignUp" onClick={handleSignUpClick}>Sign Up</StyledButton>
+                        </StyledTd>
+                    </tr>
+                </tbody>
             </StyledTable>
             {!errorMessage ?
                 <></> :
