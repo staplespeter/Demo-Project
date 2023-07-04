@@ -6,11 +6,13 @@
     "clean": "rm -rf ./build ./dist",
     "testServer": "jest",
     "testClient": "testcafe",
+    "test": "npm run testServer && npm run testClient",
     "build": "tsc --build && ts-add-js-extension --dir=build",
     "webpack": "webpack",
     "webpack-watch": "webpack --watch",
     "server": "node ./build/Server/Api/index.js",
-    "servermon": "nodemon --delay 2.5 --watch build ./build/Server/Api/index.js"
+    "servermon": "nodemon --delay 2.5 --watch build ./build/Server/Api/index.js",
+    "deploy": "npm run clean && npm run build && npm run webpack && npm run server"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",
