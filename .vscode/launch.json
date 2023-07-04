@@ -1,0 +1,16 @@
+{
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch test files with TestCafe",
+            "program": "${workspaceRoot}/node_modules/testcafe/bin/testcafe.js",
+            "args": [
+                "path:/usr/bin/brave-browser-stable",
+                "${relativeFile}"
+            ],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceRoot}"
+        }
+    ]
+}

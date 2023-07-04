@@ -1,4 +1,8 @@
 *.~lock.*
 node_modules/
 docs/
+build/
+/.parcel-cache/
+/dist/
+/coverage/
 
