@@ -5,13 +5,19 @@ Intended purely for learning, the ultimate goal is a website designer, with drag
 
 Minimum intention is to produce a signin page and account page, with full back-end code, with a port to .NET once TS/Node/React is learned.
 
-Current work being done on feature/DP-1 branch.  Pull this.
+Current work being done on feature/DP-1 branch.  Pull this for latest.
+
+Master is operational.  Pull this.
+
+Requirements:
+>NodeJs & NPM
+>MySQL.  This can be installed from /src/deploy/init.sh for Linux/Deb.  
 
 To run use:
->npm run build
+>npm install
 
->npm run server
+>npm run deploy
 
->npm run client (in a separate console)
+>https://localhost:25025
 
-Please note there is no direct client-server communication yet.
+
