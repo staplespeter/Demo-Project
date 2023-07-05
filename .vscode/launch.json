@@ -6,8 +6,10 @@
             "name": "Launch test files with TestCafe",
             "program": "${workspaceRoot}/node_modules/testcafe/bin/testcafe.js",
             "args": [
-                "path:/usr/bin/brave-browser-stable",
-                "${relativeFile}"
+                //"path:/usr/bin/brave-browser-stable",
+                "path:/snap/firefox/current/usr/lib/firefox/firefox",
+                "${relativeFile}",
+                "./src/types/"
             ],
             "console": "integratedTerminal",
             "cwd": "${workspaceRoot}"

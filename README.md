@@ -11,6 +11,7 @@ Master is operational.  Pull this.
 
 Requirements:
 >NodeJs & NPM
+
 >MySQL.  This can be installed from /src/deploy/init.sh for Linux/Deb.  
 
 To run use:

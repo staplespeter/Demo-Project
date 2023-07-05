@@ -1,5 +1,5 @@
 import mysqlx from '@mysql/xdevapi';
 
-export declare global {
+declare global {
     var jest_mysqlConfig: mysqlx.ConnectionOptions;
 }

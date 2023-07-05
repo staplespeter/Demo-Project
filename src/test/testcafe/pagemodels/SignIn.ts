@@ -6,6 +6,7 @@ class SignIn {
     public password2 = Selector('#SignIn_Password2');
     public signIn = Selector('#SignIn_SignIn');
     public signUp = Selector('#SignIn_SignUp');
+    public errorMessage = Selector('#SignIn_ErrorMessage');
 }
 
 export default new SignIn();

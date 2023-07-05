@@ -1,28 +1,40 @@
 require('dotenv').config({ path: 'config/.env' });
 
 module.exports = {
-    src: './test/testcafe/',
+    src: [
+        './src/test/testcafe/',
+        './src/types/'
+    ],
     nativeAutomation: false,
     //only chromium-based browsers (full CDP) are supported in native mode.  Firefox is not.
     //Snap installed firefox must be told to use it's default user profile.
     //Snap installed firefox doesn't work with VsCode TestCafe Test Runner to allow in editor debugging :(
     //Using Launch Config https://testcafe.io/documentation/402800/recipes/debugging/visual-studio-code
-    browsers: ['path:/usr/bin/brave-browser-stable'], //['path:/snap/firefox/current/usr/lib/firefox/firefox'], //['firefox:userProfile'],
-    baseUrl: 'https://localhost:25025',
+    browsers: ['firefox:/snap/firefox/current/usr/lib/firefox/firefox:headless'],
+        //['path:/snap/firefox/current/usr/lib/firefox/firefox'],
+        //['path:/usr/bin/brave-browser-stable'],
+        //['firefox:userProfile'],
+    baseUrl: 'file:///mnt/Data/Repos/Demo-Project/dist/Client',//'https://localhost:25025',
     //large test timeouts for debugging in browser
     testExecutionTimeout: 600000,
     runExecutionTimeout: 600000,
     compilerOptions: {
         typescript: {
-            "target": "es2020",
-            "module": "es2020",
-            "moduleResolution": "node",
-            "esModuleInterop": true,
-            "strict": true,
-            "strictNullChecks": false,
-            "noImplicitAny": true,
-            "removeComments": true,
-            "preserveConstEnums": true
+            //specifying options here instead of config file as need to set "sourceMap": false,
+            //as tsconfig.json "sourceMap": true conflicts with the "inlineSourceMap": true set by TestCafe.
+            //Could perhaps specify config + only "inlineSourceMap": false, but inlinesourcemap may be more useful?
+            options: {
+                "jsx": "react",
+                "esModuleInterop": true,
+                "strict": true,
+                "strictNullChecks": false,
+                "noImplicitAny": true,
+                "removeComments": true,
+                "preserveConstEnums": true,
+                "sourceMap": false,
+                "skipLibCheck": true,
+                "forceConsistentCasingInFileNames": true
+            }
         }
     },
     userVariables: {
