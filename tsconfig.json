@@ -24,6 +24,7 @@
     "src/Server/**/*",
     "src/Client/**/*",
     "src/shared/*",
-    "src/types/*.d.ts"
+    "src/types/*.d.ts",
+    "src/test/**/*" //have to include due to not recognising types in VSCode
   ]
 }

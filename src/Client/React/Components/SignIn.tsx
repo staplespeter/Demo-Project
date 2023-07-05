@@ -59,6 +59,15 @@ export default function SignIn(props: propsType) {
 
     async function handleSignInClick() {
         if (signInMode) {
+            if (emailRef.current.value == '') {
+                setErrorMessage('Missing Username');
+                return;
+            }
+            if (password1Ref.current.value == '') {
+                setErrorMessage('Missing Password');
+                return;
+            }
+
             if (await props.auth.signIn(emailRef.current.value, password1Ref.current.value)) {
                 setErrorMessage(null);
             }
@@ -76,6 +85,16 @@ export default function SignIn(props: propsType) {
             setSignInMode(false);
         }
         else {
+            //TODO: create Field, TextField, PasswordField components etc, with encapsulated validation.
+            //  Form component composed of errorField, fields, that will validate all fields and display errors.
+            if (emailRef.current.value == '') {
+                setErrorMessage('Missing Username');
+                return;
+            }
+            if (password1Ref.current.value == '' && password2Ref.current.value == '') {
+                setErrorMessage('Missing Password');
+                return;
+            }
             if (password1Ref.current.value != password2Ref.current.value) {
                 setErrorMessage('Passwords do not match');
                 return;
@@ -121,7 +140,7 @@ export default function SignIn(props: propsType) {
             </StyledTable>
             {!errorMessage ?
                 <></> :
-                <StyledErrorMessage id="errorMessage">
+                <StyledErrorMessage id="SignIn_ErrorMessage">
                     {errorMessage}
                 </StyledErrorMessage>
             }
