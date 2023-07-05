@@ -4,13 +4,36 @@ import https from 'https';
 import fs from 'fs';
 import AuthRoutes from "./Auth/AuthRoutes";
 import helpers from '../../shared/helpers';
+import serveStatic from "serve-static";
 
 export default class Server {
     private httpServer: https.Server;
 
+    static readonly DEFAULT_HOSTNAME = 'localhost';
     static readonly DEFAULT_PORT = 25025;
 
-    constructor() {
+    private _hostname: string;
+    get hostname() {
+        return this._hostname;
+    }
+    private _port: number;
+    get port() {
+        return this._port;
+    }
+
+    constructor();
+    constructor(port: number);
+    constructor(hostname: string, port: number);
+    constructor(hostnameOrPort?: string | number, port?: number) {
+        this._hostname = typeof(hostnameOrPort) === 'string' ?
+            hostnameOrPort :
+            process.env.API_HOSTNAME ?? Server.DEFAULT_HOSTNAME;
+        this._port = typeof(hostnameOrPort) === 'number' ?
+            hostnameOrPort :
+            port ?? (!Number.isNaN(Number.parseInt(process.env.port ?? process.env.API_PORT)) ?
+                Number.parseInt(process.env.port ?? process.env.API_PORT) :
+                Server.DEFAULT_PORT);
+        
         const expressApp = express();
 
         const corsOptions = {
@@ -49,7 +72,7 @@ export default class Server {
         };
         expressApp.use(cors(corsOptions));
         
-        const staticOptions = {
+        const staticOptions: serveStatic.ServeStaticOptions = {
             index: 'signIn.html',
             extensions: ['html, htm']
         };
@@ -89,13 +112,10 @@ export default class Server {
         // });
     }
 
-    start(): void;
-    start(port: number): void;
-    start(port?: number): void {
-        let p = port ?? process.env.port ?? Server.DEFAULT_PORT;
+    start(): void {
         this.httpServer.listen({
-            port: p,
-            host: 'localhost'
+            host: this._hostname,
+            port: this._port
         },
         () => {
             console.log('http server started');

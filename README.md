@@ -10,7 +10,9 @@ Master is operational.  Pull this.  Currently the sign in page will return a tok
 Requirements:
 >NodeJs & NPM
 
->MySQL.  This can be installed from /src/deploy/init.sh for Linux/Deb.  
+>MySQL.  This can be installed from /src/deploy/init.sh for Linux/Deb.
+
+>Firefox installed as a snap, or another browser or your choice.  A different browser will require updating /testcaferc.cjs and /.vscode/launch.json.
 
 To run use:
 >npm install

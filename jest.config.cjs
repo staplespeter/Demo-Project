@@ -20,6 +20,9 @@ module.exports = {
             user: process.env.MYSQL_TEST_USER,
             password: process.env.MYSQL_TEST_PASSWORD,
             schema: process.env.MYSQL_SCHEMA
-        }
+        },
+        jest_apiHostname: process.env.API_HOSTNAME,
+        jest_apiPort: process.env.API_PORT,
+        jest_apiHost: 'https://' + process.env.API_HOSTNAME + ':' + process.env.API_PORT + '/'
     }
 };

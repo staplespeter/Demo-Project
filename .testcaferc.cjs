@@ -1,4 +1,5 @@
 require('dotenv').config({ path: 'config/.env' });
+const path = require('path');
 
 module.exports = {
     src: [
@@ -14,7 +15,10 @@ module.exports = {
         //['path:/snap/firefox/current/usr/lib/firefox/firefox'],
         //['path:/usr/bin/brave-browser-stable'],
         //['firefox:userProfile'],
-    baseUrl: 'file:///mnt/Data/Repos/Demo-Project/dist/Client',//'https://localhost:25025',
+    //use localhost if TestCafe should target the server instead of the mock.
+    //The mock will need removed from the test files.
+    //Or have a separate full stack/acceptance test file and set the baseUrl in code.
+    baseUrl: path.join(__dirname, '/dist/Client/'),//'https://localhost:25025',
     //large test timeouts for debugging in browser
     testExecutionTimeout: 600000,
     runExecutionTimeout: 600000,
@@ -44,6 +48,7 @@ module.exports = {
             user: process.env.MYSQL_TEST_USER,
             password: process.env.MYSQL_TEST_PASSWORD,
             schema: process.env.MYSQL_SCHEMA
-        }
+        },
+        apiHost: 'https://' + process.env.API_HOSTNAME + ':' + process.env.API_PORT + '/'
     }
 }

@@ -1,5 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const { EnvironmentPlugin } = require('webpack');
+require('dotenv').config({ path: 'config/.env' });
 
 const serverConfig = {
     name: "server",
@@ -32,7 +34,8 @@ const clientConfig = {
         new HtmlWebpackPlugin({
             filename: "signIn.html",
             title: "Sign In"
-        })
+        }),
+        new EnvironmentPlugin(['API_HOSTNAME', 'API_PORT'])
     ],
     resolve: {
         fallback: {

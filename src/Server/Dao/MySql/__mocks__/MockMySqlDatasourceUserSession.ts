@@ -62,7 +62,6 @@ const mockLoadResult2 = [
 
 const mockLoadFn = async function (fields: Array<string> = null, filter: string = null, maxRows: number = 100) {
     const id = filter.substring("Id = ".length, "Id = ".length + 1);
-    console.log(id);
     const activeOnly = filter.substring("Id = ".length + 1) == ' AND EndDate IS NULL';
 
     if (id == '6') {
