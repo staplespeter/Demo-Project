@@ -1,12 +1,12 @@
 import Server from '../Server';
 import axios from 'axios';
 import https from 'https';
-import fs from 'fs';
+import fs, { copyFileSync } from 'fs';
 jest.mock('../Auth/AuthController');
 
 //TODO: HTTP/2
 const client = axios.create({
-    baseURL: 'https://localhost:25025/',
+    baseURL:  global.jest_apiHost,
     validateStatus: () => {
         return true;
     },
@@ -20,10 +20,10 @@ describe('Server start tests', () => {
         const oldNodeEnv = process.env.NODE_ENV;
         try {
             process.env.NODE_ENV = 'production';
-            const s = new Server();
+            const s = new Server(25051);
             try {
-                s.start(25051);
-                const res = await client.post('https://localhost:25051/test');
+                s.start();
+                const res = await client.post('https://' + global.jest_apiHostname + ':' + '25051/test');
                 expect(res.status).toEqual(400);
                 expect(res.data).toEqual("Error: Origin 'undefined' is not allowed");
             }

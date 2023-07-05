@@ -7,11 +7,17 @@ import { getFromLocalStorage, clearLocalStorage } from './helpers/ClientFunction
 import ClientAuthentication from '../../Client/Model/ClientAuthentication';
 import * as mysqlx from '@mysql/xdevapi';
 import { RequestMock, userVariables } from 'testcafe';
+import { URL } from 'url';
 
+
+const authUrl = new URL('auth', userVariables.apiHost as string).toString();
+const registerUrl = new URL('auth/register', userVariables.apiHost as string).toString();
+const loginUrl = new URL('auth/login', userVariables.apiHost as string).toString();
 
 //TODO: Roll these into a mock class?
 const mockRequest_Options = (req: RequestMockOptions) => {
-    return req.url.startsWith('https://localhost:25025/auth/')
+    console.log('options: ' + req.url);
+    return req.url.startsWith(authUrl)
         && req.method.toUpperCase() === 'OPTIONS';
 };
 const mockResponse_Options = (req: RequestMockOptions, res: ResponseMock) => {
@@ -40,11 +46,12 @@ const mockResponse_Failure = (req: RequestMockOptions, res: ResponseMock) => {
 const mockRegisterSuccess = RequestMock()
     .onRequestTo(mockRequest_Options)
     .respond(mockResponse_Options)
-    .onRequestTo((requestOptions) => {
-        if (requestOptions. url === 'https://localhost:25025/auth/register'
-            && requestOptions.method.toUpperCase() === 'POST')
+    .onRequestTo((req) => {
+        console.log('register: ' + req.url);
+        if (req.url === registerUrl
+            && req.method.toUpperCase() === 'POST')
         {
-            const credentials: Api.UserCredentials = JSON.parse(requestOptions.body.toString());
+            const credentials: Api.UserCredentials = JSON.parse(req.body.toString());
             if (credentials.username === 'testUser1') {
                 return true;
             }
@@ -55,11 +62,11 @@ const mockRegisterSuccess = RequestMock()
 const mockRegisterFailure = RequestMock()
     .onRequestTo(mockRequest_Options)
     .respond(mockResponse_Options)
-    .onRequestTo((requestOptions) => {
-        if (requestOptions. url === 'https://localhost:25025/auth/register'
-            && requestOptions.method.toUpperCase() === 'POST')
+    .onRequestTo((req) => {
+        if (req.url === registerUrl
+            && req.method.toUpperCase() === 'POST')
         {
-            const credentials: Api.UserCredentials = JSON.parse(requestOptions.body.toString());
+            const credentials: Api.UserCredentials = JSON.parse(req.body.toString());
             if (credentials.username === 'testUser2') {
                 return true;
             }
@@ -70,11 +77,12 @@ const mockRegisterFailure = RequestMock()
 const mockLoginSuccess = RequestMock()
     .onRequestTo(mockRequest_Options)
     .respond(mockResponse_Options)
-    .onRequestTo((requestOptions) => {
-        if (requestOptions.url === 'https://localhost:25025/auth/login'
-            && requestOptions.method.toUpperCase() === 'POST')
+    .onRequestTo((req) => {
+        console.log('login: ' + req.url);
+        if (req.url === loginUrl
+            && req.method.toUpperCase() === 'POST')
         {
-            const credentials: Api.UserCredentials = JSON.parse(requestOptions.body.toString());
+            const credentials: Api.UserCredentials = JSON.parse(req.body.toString());
             if (credentials.username === 'testUser1') {
                 return true;
             }
@@ -85,11 +93,11 @@ const mockLoginSuccess = RequestMock()
 const mockLoginFailure = RequestMock()
     .onRequestTo(mockRequest_Options)
     .respond(mockResponse_Options)
-    .onRequestTo((requestOptions) => {
-        if (requestOptions.url === 'https://localhost:25025/auth/login'
-            && requestOptions.method.toUpperCase() === 'POST')
+    .onRequestTo((req) => {
+        if (req.url === loginUrl
+            && req.method.toUpperCase() === 'POST')
         {
-            const credentials: Api.UserCredentials = JSON.parse(requestOptions.body.toString());
+            const credentials: Api.UserCredentials = JSON.parse(req.body.toString());
             if (credentials.username === 'testUser2') {
                 return true;
             }
@@ -100,9 +108,10 @@ const mockLoginFailure = RequestMock()
 const mockCatchAllRequests = RequestMock()
     .onRequestTo(mockRequest_Options)
     .respond(mockResponse_Options)
-    .onRequestTo((req: RequestMockOptions) => {
+    .onRequestTo((req) => {
+        console.log('register: ' + req.url);
         requestCount++;
-        return req.url.startsWith('https://localhost:25025/auth/')
+        return req.url.startsWith(authUrl)
             && req.method.toUpperCase() === 'POST'
     })
     .respond(mockResponse_Success);
